@@ -1,10 +1,9 @@
 <script>
-  import { slide } from "svelte/transition";
-
   import LeafletMap from "./lib/LeafletMap.svelte";
   import { settings, search } from "./assets/icons";
   import { csv } from "d3";
   import Search from "./lib/Search.svelte";
+  import Dialog from "./lib/Dialog.svelte";
   const d3 = { csv };
 
   const PARAMS = {
@@ -37,6 +36,16 @@
 
   // search bar
   let search_open = false;
+
+  function handleSelect({ detail }) {
+    map.flyTo([detail.lat, detail.lon], 12, {
+      animate: false,
+      duration: 2,
+    });
+  }
+
+  // dialog
+  let dialog_open;
 </script>
 
 <main class="dashboard-cotainer min-h-screen flex flex-col">
@@ -50,6 +59,7 @@
           searchable={surf_spots}
           options={{ keys: ["name"] }}
           on:closeSearch={() => (search_open = !search_open)}
+          on:select={handleSelect}
         />
       </div>
     {/if}
@@ -66,10 +76,14 @@
       >
       Archive
     </span>
-    <button class="flex-shrink-0 header-setting w-[30px]"
-      >{@html settings}</button
+    <button
+      class="flex-shrink-0 header-setting w-[30px]"
+      on:click={() => (dialog_open = !dialog_open)}>{@html settings}</button
     >
   </div>
+
+  <!-- Settgins -->
+  <Dialog bind:dialog_open />
 
   <!-- THE MAP -->
   <div class="content-container z-[1] flex-grow h-0">

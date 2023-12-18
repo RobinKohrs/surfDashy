@@ -13,6 +13,7 @@
   export let options;
   export let searchable;
   export let suggestions = [];
+  $: console.log("suggestions: ", suggestions);
 
   let search_term;
 
@@ -80,10 +81,12 @@
     selected_index = Math.min(suggestions.length - 1, selected_index + 1);
   }
 
-  function handleSelect() {}
+  function clickSuggestion({ item }) {
+    dispatch("select", item);
+  }
 </script>
 
-<form class="search-container w-full h-full">
+<form class="search-container w-full h-full rounded-lg">
   <label
     class="h-full mb-2 text-lg font-bold text-gray-900 sr-only dark:text-white"
     for="default-search">Search</label
@@ -110,7 +113,7 @@
     </div>
 
     <input
-      class="h-full text-2xl block w-full p-4 ps-12 dt:ps-14 pe-12 text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      class="rounded-lg overflow-hidden h-full text-2xl block w-full p-4 ps-12 dt:ps-14 pe-12 text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
       type="search"
       id="default-search"
       on:keyup={handleKeyUp}
@@ -136,7 +139,11 @@
             ? "2px dashed purple"
             : "1px solid rgba(0,0,0,0.1)"}
         >
-          <button on:click|preventDefault={() => {}} class="w-full h-full">
+          <button
+            on:click|preventDefault={() => {}}
+            class="w-full h-full"
+            on:click={() => clickSuggestion(suggestion)}
+          >
             {suggestion.item.name}
           </button>
         </li>
