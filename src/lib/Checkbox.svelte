@@ -9,13 +9,6 @@
   export let selected = "checked";
 
   let checked;
-  // $: if (selected == value_selected) {
-  //   selected = value_selected;
-  //   checked = true;
-  // } else {
-  //   selected = value_unselected;
-  //   checked = false;
-  // }
 
   $: if (!checked) {
     selected = value_unselected;
@@ -72,11 +65,6 @@
 </div>
 
 <style>
-  /* what does this do? */
-  label:active:after {
-    width: 10px;
-  }
-
   label {
     background-color: var(--color_unselected);
   }

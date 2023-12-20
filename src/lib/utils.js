@@ -1,3 +1,6 @@
+import { csv } from "d3-fetch";
+const d3 = { csv };
+
 export function getAllDaysInYear(year) {
   const startDate = new Date(year, 0, 1); // January 1st
   const endDate = new Date(year, 11, 31); // December 31st
@@ -75,4 +78,29 @@ export function getDayOfYear(date) {
   let doy = Math.floor(diff / one_day);
   console.log("doy: ", doy);
   return doy;
+}
+
+export function getUrlForDay({ url, date }) {
+  let date_formatted = `${date.getFullYear()}_${date.getMonth() + 1}_${date
+    .getDate()
+    .toString()
+    .padStart(2, "0")}`;
+  let url_full = `${url}/${date_formatted}.csv`;
+  return url_full;
+}
+
+export async function fetchData(url) {
+  let succeed;
+  let data;
+  try {
+    data = await d3.csv(url);
+    succeed = true;
+  } catch (error) {
+    succeed = false;
+  }
+
+  return {
+    data,
+    succeed,
+  };
 }

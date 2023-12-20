@@ -1,6 +1,6 @@
 <script>
   import LeafletMap from "./lib/LeafletMap.svelte";
-  import { settings, search } from "./assets/icons";
+  import { settings, search, time } from "./assets/icons";
   import { csv, json } from "d3-fetch";
   import Search from "./lib/Search.svelte";
   import Dialog from "./lib/Dialog.svelte";
@@ -101,12 +101,17 @@
   {/if}
 
   <!-- THE MAP -->
-  <div class="content-container z-[1] flex-grow h-0">
+  <div class="content-container z-[1] flex-grow h-20">
     <LeafletMap
       on:mapLoaded={initMap}
       set_view={[-22.948787528229474, -43.239910128238364]}
     />
   </div>
+
+  <!-- the settings -->
+  <!-- <div class="self-stretch w-full max-w-[1080px] mx-auto">
+    <button>{@html time}</button>
+  </div> -->
 </main>
 
 <style></style>

@@ -24,6 +24,8 @@
     isDateInArray,
     getDayOfYear,
     findIndexOfDate,
+    getUrlForDay,
+    fetchData,
   } from "../lib/utils";
 
   // params for padding
@@ -78,6 +80,15 @@
     if (!selected_date_index) {
       selected_date_index = index_today;
     }
+  }
+
+  // handle the select by the range slider
+  async function handleSelect() {
+    let url = await getUrlForDay({
+      url: "https://raw.githubusercontent.com/RobinKohrs/r-cadeasondas/main/data_preprocessed/daily_data/data/",
+      date: selected_day,
+    });
+    let data = await fetchData(url);
   }
 </script>
 
@@ -151,9 +162,7 @@
           {/each}
         </div>
         <input
-          on:click={() => console.log("click")}
-          on:keyup={() => console.log("keyup")}
-          on:keydown={() => console.log("keydown")}
+          on:click={handleSelect}
           class="block w-full"
           type="range"
           name=""
