@@ -1,10 +1,10 @@
 <script>
   import LeafletMap from "./lib/LeafletMap.svelte";
   import { settings, search } from "./assets/icons";
-  import { csv } from "d3";
+  import { csv, json } from "d3-fetch";
   import Search from "./lib/Search.svelte";
   import Dialog from "./lib/Dialog.svelte";
-  const d3 = { csv };
+  const d3 = { csv, json };
 
   const PARAMS = {
     primaryColor: "#8c66b2",
@@ -23,6 +23,7 @@
   let surf_spots;
   async function addSpots() {
     surf_spots = await d3.csv(spots_path);
+    // console.log("surfspots: ", surf_spots);
     surf_spots.forEach((s, i) => {
       let cm = L.circleMarker([s.lat, s.lon], {
         radius: 12,
@@ -43,6 +44,18 @@
       duration: 2,
     });
   }
+
+  ////////////////
+  // available data
+  ////////////////
+
+  // days
+  let available_days;
+  let path_days =
+    "https://raw.githubusercontent.com/RobinKohrs/r-cadeasondas/main/data_preprocessed/daily_data/index_days.json";
+  d3.json(path_days).then((days) => {
+    available_days = days.map((e) => new Date(e.replaceAll("_", "-")));
+  });
 
   // dialog
   let dialog_open;
@@ -83,7 +96,9 @@
   </div>
 
   <!-- Settgins -->
-  <Dialog bind:dialog_open />
+  {#if dialog_open}
+    <Dialog bind:dialog_open {available_days} />
+  {/if}
 
   <!-- THE MAP -->
   <div class="content-container z-[1] flex-grow h-0">
