@@ -1,4 +1,7 @@
 <script>
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
+
   import Checkbox from "./Checkbox.svelte";
   import { clear } from "./../assets/icons";
 
@@ -89,6 +92,7 @@
       date: selected_day,
     });
     let data = await fetchData(url);
+    dispatch("dataLoaded", data);
   }
 </script>
 

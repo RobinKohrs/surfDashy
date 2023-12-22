@@ -4,10 +4,13 @@
   import { csv, json } from "d3-fetch";
   import Search from "./lib/Search.svelte";
   import Dialog from "./lib/Dialog.svelte";
+  import { getScales } from "./lib/utils";
+  import { circleMarker } from "leaflet";
   const d3 = { csv, json };
 
   const PARAMS = {
     primaryColor: "#8c66b2",
+    activeMarkerColor: "cornflowerblue",
   };
 
   let map;
@@ -21,18 +24,41 @@
   // load surf spot data
   let spots_path = "data/spots.csv";
   let surf_spots;
+  let circle_marker;
   async function addSpots() {
     surf_spots = await d3.csv(spots_path);
     // console.log("surfspots: ", surf_spots);
-    surf_spots.forEach((s, i) => {
+    circle_marker = surf_spots.map((s, i) => {
       let cm = L.circleMarker([s.lat, s.lon], {
-        radius: 12,
-        color: PARAMS.primaryColor,
+        radius: 8,
+        fillColor: PARAMS.primaryColor,
+        fillOpacity: 0.75,
+        stroke: false,
       });
+
+      cm.on("click", () => setActiveSpot({ marker: cm, marker_data: s }));
+
       let popup_text = `<div style="font-size: 2rem; font-weight: bold;">${s.name}</span>`;
       cm.bindTooltip(popup_text);
       cm.addTo(map);
+      return {
+        marker: cm,
+        spot: s,
+      };
     });
+  }
+
+  let active_spot;
+  function setActiveSpot(as) {
+    console.log("hee", active_spot);
+    // reset old
+    if (active_spot) {
+      active_spot.marker.setStyle({ fillColor: PARAMS.primaryColor });
+    }
+
+    // set new
+    active_spot = as;
+    active_spot.marker.setStyle({ fillColor: PARAMS.activeMarkerColor });
   }
 
   // search bar
@@ -59,9 +85,50 @@
 
   // dialog
   let dialog_open;
+
+  ////////////////
+  // handle data coming after date select
+  ////////////////
+  let current_map_data;
+  function handleData({ detail }) {
+    calculating_scales = true;
+    setTimeout(() => {
+      current_map_data = detail.data;
+    }, 60);
+  }
+
+  ////////////////
+  // Get the scales for the data displayed
+  ////////////////
+  let size_scale, color_scale;
+  let curr_variable = "daily_mean_swell_rating";
+  let calculating_scales = false;
+  $: if (current_map_data) {
+    styleMarkersNewData();
+  }
+
+  async function styleMarkersNewData() {
+    size_scale = await getScales(current_map_data, curr_variable, [0.2, 10]);
+    color_scale = await getScales(current_map_data, curr_variable, [
+      "white",
+      PARAMS.primaryColor,
+    ]);
+    circle_marker.forEach((cm, i) => {
+      // find current map data
+      let f = current_map_data.find((c) => c._id == cm.spot.id);
+      let size = size_scale(+f[curr_variable]);
+      let color = color_scale(+f[curr_variable]);
+      cm.marker.setStyle({ radius: size, fillColor: color });
+    });
+    calculating_scales = false;
+  }
 </script>
 
 <main class="dashboard-cotainer min-h-screen flex flex-col">
+  {#if calculating_scales}
+    <div class="fixed z-[2000]">CALCULATING</div>
+  {/if}
+
   <div
     class="self-stretch z-[2] w-full max-w-[1080px] mx-auto sticky top-0 flex gap-2 justify-between items-center text-xl dt:text-3xl py-2 dt:py-6 px-2 min-h-[50px]"
   >
@@ -97,7 +164,7 @@
 
   <!-- Settgins -->
   {#if dialog_open}
-    <Dialog bind:dialog_open {available_days} />
+    <Dialog bind:dialog_open {available_days} on:dataLoaded={handleData} />
   {/if}
 
   <!-- THE MAP -->
