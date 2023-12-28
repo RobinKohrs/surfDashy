@@ -171,7 +171,7 @@
   {/if}
 
   <!-- THE MAP -->
-  <div class="content-container z-[1] flex-grow h-20 bg-red-200">
+  <div class="content-container z-[1] flex-grow h-20">
     <LeafletMap
       on:mapLoaded={initMap}
       set_view={[-22.948787528229474, -43.239910128238364]}
@@ -179,7 +179,7 @@
   </div>
 
   <!-- the settings -->
-  <div class="self-stretch w-full max-w-[1080px] mx-auto">hi there</div>
+  <div class="self-stretch w-full max-w-[1080px] mx-auto">hi there all</div>
 </main>
 
 <style></style>
