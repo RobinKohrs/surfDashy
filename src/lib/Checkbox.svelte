@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  export let width = "100px";
+  export let width = "200px";
   export let height = "50px";
   export let value_unselected = "unchecked";
   export let value_selected = "checked";
@@ -50,7 +50,7 @@
       style:width
       style:height
       class="
-    peer-checked:after:left-[calc(100%-5px)] peer-checked:after:-translate-x-full cursor-pointer indent-[-9999px] bg-slate-500 block rounded-full relative after:content-[''] after:absolute after:top-[5px] after:left-[5px] after:w-[40px] after:h-[40px] after:bg-white after:rounded-[40px] after:transition-all after:duration-300"
+    peer-checked:after:left-[calc(100%-5px)] peer-checked:after:-translate-x-full cursor-pointer indent-[-9999px] bg-slate-500 block rounded-full relative after:content-[''] after:absolute after:top-[5px] after:left-[1px] after:w-[40px] after:h-[40px] after:bg-white after:rounded-[40px] after:transition-all after:duration-[300ms]"
       for="switch">Toggle</label
     >
   </div>
