@@ -179,7 +179,7 @@
   </div>
 
   <!-- the settings -->
-  <div class="self-stretch w-full max-w-[1080px] mx-auto">hi</div>
+  <div class="self-stretch w-full max-w-[1080px] mx-auto">hi there</div>
 </main>
 
 <style></style>

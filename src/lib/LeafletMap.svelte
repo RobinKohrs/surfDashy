@@ -26,7 +26,7 @@
   });
 </script>
 
-<div class="map-container w-full h-full relative">
+<div class="map-container w-full h-full relative bg-purple-500">
   <div class="vignette" />
   <div
     id="map"
