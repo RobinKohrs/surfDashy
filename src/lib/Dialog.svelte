@@ -96,7 +96,7 @@
   }
 </script>
 
-<div class="dialog__outer z-[100] fixed min-h-screen w-full backdrop-blur">
+<div class="dialog__outer z-[2000] fixed min-h-screen w-full backdrop-blur">
   <div
     bind:this={dialog_container}
     bind:offsetWidth={dialog_width}

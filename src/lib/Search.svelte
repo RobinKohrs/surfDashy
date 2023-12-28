@@ -83,10 +83,11 @@
 
   function clickSuggestion({ item }) {
     dispatch("select", item);
+    suggestions = [];
   }
 </script>
 
-<form class="search-container w-full h-full rounded-lg">
+<form class="search-container w-full h-full rounded-lg z-[3000]">
   <label
     class="h-full mb-2 text-lg font-bold text-gray-900 sr-only dark:text-white"
     for="default-search">Search</label
@@ -140,9 +141,8 @@
             : "1px solid rgba(0,0,0,0.1)"}
         >
           <button
-            on:click|preventDefault={() => {}}
             class="w-full h-full"
-            on:click={() => clickSuggestion(suggestion)}
+            on:click|preventDefault={() => clickSuggestion(suggestion)}
           >
             {suggestion.item.name}
           </button>

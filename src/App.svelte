@@ -1,4 +1,5 @@
 <script>
+  import { select } from "d3-selection";
   import LeafletMap from "./lib/LeafletMap.svelte";
   import { settings, search, time } from "./assets/icons";
   import { csv, json } from "d3-fetch";
@@ -65,6 +66,7 @@
   let search_open = false;
 
   function handleSelect({ detail }) {
+    console.log("here", detail);
     map.flyTo([detail.lat, detail.lon], 12, {
       animate: false,
       duration: 2,
@@ -139,10 +141,10 @@
   {/if}
 
   <div
-    class="self-stretch z-[2] w-full max-w-[1080px] mx-auto sticky top-0 flex gap-2 justify-between items-center text-xl dt:text-3xl py-2 dt:py-6 px-2 min-h-[50px]"
+    class="z-[2] self-stretch w-full max-w-[1080px] mx-auto sticky top-0 flex gap-2 justify-between items-center text-xl dt:text-3xl py-2 dt:py-6 px-2 min-h-[50px]"
   >
     {#if search_open}
-      <div class="absolute inset-0">
+      <div class="absolute inset-0 z-[2]">
         <Search
           searchable={surf_spots}
           options={{ keys: ["name"] }}
@@ -175,7 +177,7 @@
   {/if}
 
   <!-- THE MAP -->
-  <div class="content-container flex-grow bg-red-200" bind:this={mapContainer}>
+  <div class="z-[1] content-container flex-grow" bind:this={mapContainer}>
     {#if mapHeight}
       <LeafletMap
         on:mapLoaded={initMap}

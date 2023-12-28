@@ -30,7 +30,7 @@
 <div
   id="map"
   style:height={`${mapHeight}px`}
-  class="overflow-hidden outline-none h-full border-2 border-black"
+  class="overflow-hidden outline-none h-full"
   bind:this={mapElement}
 />
 
