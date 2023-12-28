@@ -6,6 +6,7 @@
   let mapElement;
   let map;
 
+  export let mapHeight;
   export let tile_layer_options = { ext: "png", attribution: "" };
   export let tile_layer = {
     layer:
@@ -28,6 +29,7 @@
 
 <div
   id="map"
+  style:height={`${mapHeight}px`}
   class="overflow-hidden outline-none h-full border-2 border-black"
   bind:this={mapElement}
 />

@@ -125,6 +125,12 @@
     });
     calculating_scales = false;
   }
+
+  let mapContainer;
+  let mapHeight;
+  $: if (mapContainer) {
+    mapHeight = mapContainer.offsetHeight;
+  }
 </script>
 
 <main class="dashboard-cotainer min-h-screen flex flex-col">
@@ -135,7 +141,6 @@
   <div
     class="self-stretch z-[2] w-full max-w-[1080px] mx-auto sticky top-0 flex gap-2 justify-between items-center text-xl dt:text-3xl py-2 dt:py-6 px-2 min-h-[50px]"
   >
-    <!-- Search open -->
     {#if search_open}
       <div class="absolute inset-0">
         <Search
@@ -147,7 +152,6 @@
       </div>
     {/if}
 
-    <!-- Normal nav bar -->
     <button
       on:click={() => (search_open = !search_open)}
       class="header-search flex-shrink-0 w-[30px]">{@html search}</button
@@ -171,11 +175,14 @@
   {/if}
 
   <!-- THE MAP -->
-  <div class="content-container flex-grow h-20">
-    <LeafletMap
-      on:mapLoaded={initMap}
-      set_view={[-22.948787528229474, -43.239910128238364]}
-    />
+  <div class="content-container flex-grow bg-red-200" bind:this={mapContainer}>
+    {#if mapHeight}
+      <LeafletMap
+        on:mapLoaded={initMap}
+        {mapHeight}
+        set_view={[-22.948787528229474, -43.239910128238364]}
+      />
+    {/if}
   </div>
 
   <!-- the settings -->
