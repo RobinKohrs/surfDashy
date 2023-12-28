@@ -179,9 +179,7 @@
   </div>
 
   <!-- the settings -->
-  <!-- <div class="self-stretch w-full max-w-[1080px] mx-auto">
-    <button>{@html time}</button>
-  </div> -->
+  <div class="self-stretch w-full max-w-[1080px] mx-auto">hi</div>
 </main>
 
 <style></style>
