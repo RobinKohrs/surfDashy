@@ -26,14 +26,11 @@
   });
 </script>
 
-<div class="map-container w-full h-full relative bg-purple-500">
-  <div class="vignette" />
-  <div
-    id="map"
-    class="overflow-hidden outline-none h-full border-2 border-black"
-    bind:this={mapElement}
-  />
-</div>
+<div
+  id="map"
+  class="overflow-hidden outline-none h-full border-2 border-black"
+  bind:this={mapElement}
+/>
 
 <style>
   @import "leaflet/dist/leaflet.css";
