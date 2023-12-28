@@ -28,7 +28,11 @@
 
 <div class="map-container w-full h-full relative">
   <div class="vignette" />
-  <div id="map" class="overflow-hidden outline-none" bind:this={mapElement} />
+  <div
+    id="map"
+    class="overflow-hidden outline-none h-full"
+    bind:this={mapElement}
+  />
 </div>
 
 <style>

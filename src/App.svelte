@@ -108,7 +108,7 @@
   }
 
   async function styleMarkersNewData() {
-    size_scale = await getScales(current_map_data, curr_variable, [0.2, 10]);
+    size_scale = await getScales(current_map_data, curr_variable, [0.2, 20]);
     color_scale = await getScales(current_map_data, curr_variable, [
       "white",
       PARAMS.primaryColor,
@@ -117,6 +117,9 @@
       // find current map data
       let f = current_map_data.find((c) => c._id == cm.spot.id);
       let size = size_scale(+f[curr_variable]);
+      if (i === 2) {
+        console.log("size: ", size);
+      }
       let color = color_scale(+f[curr_variable]);
       cm.marker.setStyle({ radius: size, fillColor: color });
     });

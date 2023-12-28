@@ -1,7 +1,7 @@
 import { csv } from "d3-fetch";
-import { scaleLinear } from "d3-scale";
+import { scaleLinear, scaleLog, scalePow } from "d3-scale";
 import { extent } from "d3-array";
-const d3 = { csv, scaleLinear, extent };
+const d3 = { csv, scaleLinear, extent, scaleLog, scalePow };
 
 export function getAllDaysInYear(year) {
   const startDate = new Date(year, 0, 1); // January 1st
@@ -110,6 +110,8 @@ export async function fetchData(url) {
 export async function getScales(data_array, accessor, rng) {
   let dd = data_array.map((d) => +d[accessor]).filter((v) => !isNaN(v));
   let ext = d3.extent(dd);
-  let sc = d3.scaleLinear().domain(ext).range(rng);
+  ext[0] = ext[0] + 0.0001;
+  // let sc = d3.scaleLinear().domain(ext).range(rng);
+  let sc = d3.scalePow().exponent(2).domain(ext).range(rng);
   return sc;
 }
