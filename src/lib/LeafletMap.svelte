@@ -30,7 +30,7 @@
   <div class="vignette" />
   <div
     id="map"
-    class="overflow-hidden outline-none h-full"
+    class="overflow-hidden outline-none h-full border-2 border-black"
     bind:this={mapElement}
   />
 </div>
