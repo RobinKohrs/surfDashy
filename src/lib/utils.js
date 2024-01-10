@@ -1,7 +1,35 @@
-import { csv } from "d3-fetch";
+import { csv, json } from "d3-fetch";
 import { scaleLinear, scaleLog, scalePow } from "d3-scale";
 import { extent } from "d3-array";
-const d3 = { csv, scaleLinear, extent, scaleLog, scalePow };
+const d3 = { csv, json, scaleLinear, extent, scaleLog, scalePow };
+
+export async function getInitialData() {
+  let path_dates =
+    "https://raw.githubusercontent.com/RobinKohrs/r-cadeasondas/main/data_preprocessed/daily_data/index_days.json";
+
+  let path_spot_coordinates = "data/spots.csv";
+
+  // let dates_with_data;
+  // let selected_date;
+  // d3.json(path_dates).then((d) => {
+  //   let dd = d.map((e) => new Date(e.replaceAll("_", "-")));
+  //   dates_with_data = dd;
+  //   selected_date = dates_with_data[dates_with_data.length - 1];
+  // });
+
+  // return { dates_with_data, selected_date };
+
+  // dates with data
+  let dates_raw = await d3.json(path_dates);
+  let dates_with_data = dates_raw.map((e) => new Date(e.replaceAll("_", "-")));
+  let selected_date = dates_with_data[dates_with_data.length - 1];
+
+  // coordinates for spots
+  let spots_path = "data/spots.csv";
+  let data_coordinates = await d3.csv(spots_path);
+
+  return { dates_with_data, selected_date, data_coordinates };
+}
 
 export function getAllDaysInYear(year) {
   const startDate = new Date(year, 0, 1); // January 1st
@@ -19,6 +47,72 @@ export function getAllDaysInYear(year) {
   }
 
   return daysArray;
+}
+
+export async function getDataForDay(map, selected_date) {
+  let url = getUrlForDay({
+    url: "https://raw.githubusercontent.com/RobinKohrs/r-cadeasondas/main/data_preprocessed/daily_data/data/",
+    date: selected_date,
+  });
+  let data = await fetchData(url);
+  return data;
+}
+
+export function drawMap(
+  map,
+  data_current,
+  selected_variable_color,
+  selected_variable_size,
+  scaleSize,
+  scaleColor,
+  onClick
+) {
+  let circle_marker = data_current.map((s, i) => {
+    let cm = L.circleMarker([s.lat, s.lon], {
+      radius: scaleSize(s[selected_variable_size]),
+      fillColor: scaleColor(s[selected_variable_color]),
+      fillOpacity: 0.75,
+      color: "black",
+      weight: 0.7,
+      // stroke: false,
+    });
+
+    cm.on("click", (event) => onClick(event, cm, s));
+
+    let popup_text = `<div style="font-size: 2rem; font-weight: bold;">${s.name}</span>`;
+    cm.bindTooltip(popup_text);
+    cm.addTo(map);
+    return {
+      marker: cm,
+      spot: s,
+    };
+  });
+
+  return;
+}
+
+export function resetStyle(marker, size, color) {
+  marker.setStyle({
+    fillColor: color,
+    radius: size,
+  });
+}
+
+export function getAllDaysInMonth(year, month) {
+  let days_in_month;
+  let date_first = new Date(year, month, 1);
+  let days = [];
+  while (date_first.getMonth() === month) {
+    days.push(new Date(date_first));
+    date_first.setDate(date_first.getDate() + 1);
+  }
+  days_in_month = days.map((e) => {
+    return {
+      display: e.getDate(),
+      slug: e.getDate(),
+    };
+  });
+  return days_in_month;
 }
 
 // Function to check if a date is in an array of dates
@@ -58,7 +152,7 @@ export function findIndexOfDate(targetDate, dateArray) {
     targetDate.getDate()
   );
 
-  for (let i = 0; i <= dateArray.length; i++) {
+  for (let i = 0; i <= dateArray.length - 1; i++) {
     let d = dateArray[i];
     const currentDateWithoutTime = new Date(
       d.getFullYear(),
@@ -78,7 +172,6 @@ export function getDayOfYear(date) {
   let diff = date - start;
   let one_day = 1000 * 60 * 60 * 24;
   let doy = Math.floor(diff / one_day);
-  console.log("doy: ", doy);
   return doy;
 }
 
@@ -107,11 +200,44 @@ export async function fetchData(url) {
   };
 }
 
-export async function getScales(data_array, accessor, rng) {
+export function getScales(data_array, accessor, rng) {
   let dd = data_array.map((d) => +d[accessor]).filter((v) => !isNaN(v));
   let ext = d3.extent(dd);
   ext[0] = ext[0] + 0.0001;
   // let sc = d3.scaleLinear().domain(ext).range(rng);
   let sc = d3.scalePow().exponent(2).domain(ext).range(rng);
   return sc;
+}
+
+export function handleSelect(map, { detail }) {
+  map.flyTo([detail.lat, detail.lon], 12, {
+    animate: false,
+    duration: 2,
+  });
+}
+export function group_by_year(dates) {
+  let data_by_year;
+  dates.forEach((d) => {
+    let year_that_date = d.getFullYear();
+    if (!data_by_year[year_that_date]) {
+      data_by_year[year_that_date] = [];
+    }
+
+    data_by_year[year_that_date].push(d);
+  });
+
+  return data_by_year;
+}
+
+export function build_selected_options(
+  day_or_moth,
+  selected_year,
+  selected_month,
+  selected_dom
+) {
+  let selected_options = `${day_or_moth}_${selected_year}_${selected_month}${
+    day_or_moth === "per_day" ? "_" + selected_dom : ""
+  }`;
+
+  return selected_options;
 }

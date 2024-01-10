@@ -1,182 +1,102 @@
 <script>
-  import { select } from "d3-selection";
   import LeafletMap from "./lib/LeafletMap.svelte";
   import { settings, search, time } from "./assets/icons";
   import { csv, json } from "d3-fetch";
   import Search from "./lib/Search.svelte";
   import Dialog from "./lib/Dialog.svelte";
-  import { getScales } from "./lib/utils";
-  import { circleMarker } from "leaflet";
+  import SizeLegend from "./lib/sizeLegend.svelte";
+  import params from "./assets/params.json";
+  import {
+    getScales,
+    handleSelect,
+    getInitialData,
+    getDataForDay,
+    drawMap,
+    resetStyle,
+  } from "./lib/utils";
   const d3 = { csv, json };
 
-  const PARAMS = {
-    primaryColor: "#8c66b2",
-    activeMarkerColor: "cornflowerblue",
-  };
-
-  let map;
-  let L;
-  function initMap(event) {
-    map = event.detail.map;
-    L = event.detail.L;
-    addSpots();
-  }
-
-  // load surf spot data
-  let spots_path = "data/spots.csv";
-  let surf_spots;
-  let circle_marker;
-  async function addSpots() {
-    surf_spots = await d3.csv(spots_path);
-    // console.log("surfspots: ", surf_spots);
-    circle_marker = surf_spots.map((s, i) => {
-      let cm = L.circleMarker([s.lat, s.lon], {
-        radius: 8,
-        fillColor: PARAMS.primaryColor,
-        fillOpacity: 0.75,
-        stroke: false,
-      });
-
-      cm.on("click", () => setActiveSpot({ marker: cm, marker_data: s }));
-
-      let popup_text = `<div style="font-size: 2rem; font-weight: bold;">${s.name}</span>`;
-      cm.bindTooltip(popup_text);
-      cm.addTo(map);
-      return {
-        marker: cm,
-        spot: s,
-      };
-    });
-  }
-
-  let active_spot;
-  function setActiveSpot(as) {
-    console.log("hee", active_spot);
-    // reset old
-    if (active_spot) {
-      active_spot.marker.setStyle({ fillColor: PARAMS.primaryColor });
-    }
-
-    // set new
-    active_spot = as;
-    active_spot.marker.setStyle({ fillColor: PARAMS.activeMarkerColor });
-  }
-
-  // search bar
-  let search_open = false;
-
-  function handleSelect({ detail }) {
-    console.log("here", detail);
-    map.flyTo([detail.lat, detail.lon], 12, {
-      animate: false,
-      duration: 2,
-    });
-  }
-
-  ////////////////
-  // available data
-  ////////////////
-
-  // days
-  let available_days;
-  let path_days =
-    "https://raw.githubusercontent.com/RobinKohrs/r-cadeasondas/main/data_preprocessed/daily_data/index_days.json";
-  d3.json(path_days).then((days) => {
-    available_days = days.map((e) => new Date(e.replaceAll("_", "-")));
+  // Iniial data
+  // days with data and coordinates
+  let data_dates, selected_date;
+  let data_coordinates;
+  getInitialData().then((d) => {
+    (data_dates = d.dates_with_data),
+      (selected_date = d.selected_date),
+      (data_coordinates = d.data_coordinates);
   });
 
-  // dialog
-  let dialog_open;
-
-  ////////////////
-  // handle data coming after date select
-  ////////////////
-  let current_map_data;
-  function handleData({ detail }) {
-    calculating_scales = true;
-    setTimeout(() => {
-      current_map_data = detail.data;
-    }, 60);
-  }
-
-  ////////////////
-  // Get the scales for the data displayed
-  ////////////////
-  let size_scale, color_scale;
-  let curr_variable = "daily_mean_swell_rating";
-  let calculating_scales = false;
-  $: if (current_map_data) {
-    styleMarkersNewData();
-  }
-
-  async function styleMarkersNewData() {
-    size_scale = await getScales(current_map_data, curr_variable, [0.2, 20]);
-    color_scale = await getScales(current_map_data, curr_variable, [
-      "white",
-      PARAMS.primaryColor,
-    ]);
-    circle_marker.forEach((cm, i) => {
-      // find current map data
-      let f = current_map_data.find((c) => c._id == cm.spot.id);
-      let size = size_scale(+f[curr_variable]);
-      if (i === 2) {
-        console.log("size: ", size);
-      }
-      let color = color_scale(+f[curr_variable]);
-      cm.marker.setStyle({ radius: size, fillColor: color });
-    });
-    calculating_scales = false;
-  }
-
+  ///////
+  // the map container
+  ///////
   let mapContainer;
   let mapHeight;
   $: if (mapContainer) {
     mapHeight = mapContainer.offsetHeight;
   }
+
+  // once map loaded
+  let map, L;
+  function initMap(event) {
+    map = event.detail.map;
+    L = event.detail.L;
+  }
+
+  // get the data for that date and variable
+  let selected_variable_color = "daily_mean_water_temperature_max";
+  let selected_variable_size = "daily_mean_swell_rating";
+  let data_current;
+  $: if (selected_date && map) {
+    getDataForDay(map, selected_date).then((d) => {
+      data_current = d.data;
+    });
+  }
+
+  let active_spot_id, active_spot_marker, active_spot_data;
+  $: console.log("asd: ", active_spot_data);
+  const onSpotClick = (event, marker, spot) => {
+    // if there is an active id already
+    if (active_spot_id) {
+      let _color = scaleColor(spot[selected_variable_color]);
+      let _size = scaleSize(spot[selected_variable_size]);
+      resetStyle(active_spot_marker, _size, _color);
+    }
+
+    // set new
+    active_spot_data = spot;
+    active_spot_marker = marker;
+    active_spot_id = spot._id;
+    marker.setStyle({ fillColor: "green" });
+  };
+
+  let scaleSize, scaleColor;
+  $: if (data_current) {
+    // get the new scales
+    scaleSize = getScales(data_current, selected_variable_size, [3, 15]);
+    scaleColor = getScales(data_current, selected_variable_color, [
+      "white",
+      "darkred",
+    ]);
+
+    // draw the data
+    drawMap(
+      map,
+      data_current,
+      selected_variable_color,
+      selected_variable_size,
+      scaleSize,
+      scaleColor,
+      onSpotClick
+    );
+  }
+
+  // TODO: gradually rebuild app svelte from _App.svelte!!
 </script>
 
-<main class="dashboard-cotainer min-h-screen flex flex-col">
-  {#if calculating_scales}
-    <div class="fixed z-[2000]">CALCULATING</div>
-  {/if}
-
-  <div
-    class="z-[2] self-stretch w-full max-w-[1080px] mx-auto sticky top-0 flex gap-2 justify-between items-center text-xl dt:text-3xl py-2 dt:py-6 px-2 min-h-[50px]"
-  >
-    {#if search_open}
-      <div class="absolute inset-0 z-[2]">
-        <Search
-          searchable={surf_spots}
-          options={{ keys: ["name"] }}
-          on:closeSearch={() => (search_open = !search_open)}
-          on:select={handleSelect}
-        />
-      </div>
-    {/if}
-
-    <button
-      on:click={() => (search_open = !search_open)}
-      class="header-search flex-shrink-0 w-[30px]">{@html search}</button
-    >
-    <span class="header-title text-center max-w-[60%]">
-      The
-      <span class="font-bold" style="color: {PARAMS.primaryColor}"
-        >Surfspot&shy;</span
-      >
-      Archive
-    </span>
-    <button
-      class="flex-shrink-0 header-setting w-[30px]"
-      on:click={() => (dialog_open = !dialog_open)}>{@html settings}</button
-    >
+<div class="app__container flex flex-col min-h-screen">
+  <div>
+    <SizeLegend />
   </div>
-
-  <!-- Settgins -->
-  {#if dialog_open}
-    <Dialog bind:dialog_open {available_days} on:dataLoaded={handleData} />
-  {/if}
-
-  <!-- THE MAP -->
   <div class="z-[1] content-container flex-grow" bind:this={mapContainer}>
     {#if mapHeight}
       <LeafletMap
@@ -186,6 +106,4 @@
       />
     {/if}
   </div>
-</main>
-
-<style></style>
+</div>

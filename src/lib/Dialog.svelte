@@ -1,4 +1,6 @@
 <script>
+  import { slide } from "svelte/transition";
+  import ButtonBar from "./../lib/ButtonBar.svelte";
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
 
@@ -24,11 +26,14 @@
 
   import {
     getAllDaysInYear,
+    getAllDaysInMonth,
     isDateInArray,
     getDayOfYear,
     findIndexOfDate,
     getUrlForDay,
     fetchData,
+    group_by_year,
+    build_selected_options,
   } from "../lib/utils";
 
   // params for padding
@@ -38,33 +43,22 @@
   };
 
   export let dialog_open;
+  export let selected_options;
+  export let available_days = [];
+
+  // dialog with
   let dialog_container;
   let dialog_width;
-
-  export let available_days = [];
 
   function closeModal() {
     dialog_open = false;
   }
 
   // once there are dates, group them
-  $: if (available_days.length > 0) {
-    group_by_year(available_days);
-  }
-
   let data_by_year = {};
-  $: min_year = Math.min(...Object.keys(data_by_year).map((e) => +e));
-  $: max_year = Math.max(...Object.keys(data_by_year).map((e) => +e));
-  $: selected_year = +min_year;
-  function group_by_year(dates) {
-    dates.forEach((d) => {
-      let year_that_date = d.getFullYear();
-      if (!data_by_year[year_that_date]) {
-        data_by_year[year_that_date] = [];
-      }
-
-      data_by_year[year_that_date].push(d);
-    });
+  let years_with_data;
+  $: if (available_days.length > 0) {
+    data_by_year = group_by_year(available_days);
   }
 
   let all_days_in_year;
@@ -94,9 +88,48 @@
     let data = await fetchData(url);
     dispatch("dataLoaded", data);
   }
+
+  let months = Array.from({ length: 12 }).map((e, i) => {
+    let d = new Date(2023, i, 1);
+    let month = d.toLocaleString("default", { month: "long" });
+    return {
+      display: month,
+      slug: i,
+    };
+  });
+
+  // selected day or month
+  let day_or_moth = "per_day";
+
+  // selected month
+  let selected_month = new Date().getMonth();
+
+  // selected year
+  let selected_year = new Date().getFullYear();
+
+  let selected_dom = String(new Date().getDate());
+
+  $: if (day_or_moth == "per_month") {
+    selected_dom = "";
+  }
+
+  // days in the selected month
+  let days_in_month;
+  $: if (selected_month || selected_year) {
+    days_in_month = getAllDaysInMonth(selected_year, selected_month);
+  }
+
+  $: selected_date = `${day_or_moth}_${selected_year}_${selected_month}${
+    day_or_moth === "per_day" ? "_" + selected_dom : ""
+  }`;
+
+  $: console.log("sd: ", selected_date);
 </script>
 
-<div class="dialog__outer z-[2000] fixed min-h-screen w-full backdrop-blur">
+<div
+  transition:slide
+  class="dialog__outer z-[2000] fixed min-h-screen w-full backdrop-blur"
+>
   <div
     bind:this={dialog_container}
     bind:offsetWidth={dialog_width}
@@ -105,92 +138,49 @@
     <button on:click={closeModal} class="absolute top-0 right-0 w-12 h-12"
       >{@html clear}</button
     >
-    <h1 class="text-2xl">Settings</h1>
-    <Checkbox
-      value_selected={"per Day"}
-      value_unselected={"per Month"}
-      color_selected={"firebrick"}
-      selected={"per Day"}
-    />
-    <hr class="my-8" />
+    <h1 transition:slide class="text-2xl">Settings</h1>
+
+    <!-- per month or day -->
+    <div class="select__per_day_month" transition:slide>
+      <ButtonBar
+        options={[
+          { display: "per Day", slug: "per_day" },
+          { display: "per Month", slug: "per_month" },
+        ]}
+        bind:selected={day_or_moth}
+      />
+    </div>
+    <!-- per month or day -->
+
+    <hr class="my-4" />
 
     <!-- select year -->
-    <div class="year__select">
-      <div>Select the year:</div>
-      <div class="year__select__buttons flex gap-2 items-stretch my-2">
-        {#each [...Object.keys(data_by_year), 2020, 2019] as year, i}
-          <button
-            on:click={() => (selected_year = +year)}
-            style:background-color={+year === +selected_year
-              ? "rgba(0,0,0,.2)"
-              : ""}
-            class="px-2 py-1 border border-gray-400 rounded-lg hover:bg-gray-200"
-            >{year}</button
-          >
-        {/each}
-      </div>
+    <div class="select__year" transition:slide>
+      <ButtonBar
+        options={[
+          { display: "2020", slug: 2020 },
+          { display: "2021", slug: 2021 },
+          { display: "2022", slug: 2022 },
+          { display: "2023", slug: 2023 },
+          { display: "2024", slug: 2024 },
+        ]}
+        bind:selected={selected_year}
+      />
     </div>
-    <hr class="my-8" />
 
-    <!-- dates -->
-    <div class="date__select">
-      <label class="block text-center" for="date-slide">
-        <span class="text-2xl">Selected Day:&nbsp;</span>
-        <span
-          class="text-4xl"
-          style="font-weight: 900;"
-          style:color={isDateInArray(selected_day, available_days)
-            ? "#576e82"
-            : "#ababab"}
-        >
-          {selected_day.toLocaleString("en", {
-            day: "numeric",
-            month: "short",
-          })}
-        </span>
-      </label>
-      <div class="date-slider-container flex flex-col items-stretch">
-        <div
-          class="dates-indicator-container flex w-full rounded-md overflow-clip"
-        >
-          {#each all_days_in_year as diy, i}
-            {@const day = new Date(diy)}
-            <div
-              data-day={diy}
-              style:width={`${dialog_width / 365}px`}
-              class="h-4"
-              style:background-color={isDateInArray(diy, available_days)
-                ? "#95c3cf"
-                : "#d1d1cf"}
-            ></div>
-          {/each}
-        </div>
-        <input
-          on:click={handleSelect}
-          class="block w-full"
-          type="range"
-          name=""
-          id="date-slide"
-          min="0"
-          max={all_days_in_year.length - 1}
-          bind:value={selected_date_index}
-        />
-      </div>
-      <div class="date-axis flex justify-between">
-        {#each Array(3) as tick, i}
-          {#if i === 0}
-            <span>Jan.</span>
-          {:else if i === 1}
-            <span>Jul.</span>
-          {:else}
-            <span>Dez.</span>
-          {/if}
-        {/each}
-        <!-- <svg class="w-full h-10">
-          <g bind:this={gx} transform="translate(0,10)" />
-        </svg> -->
-      </div>
+    <hr class="my-4" />
+
+    <!-- select month -->
+    <div class="select__month" transition:slide>
+      <ButtonBar options={months} bind:selected={selected_month} />
     </div>
+
+    {#if day_or_moth === "per_day"}
+      <hr class="my-4" />
+      <div transition:slide={{ axis: "x" }} class="buttonbar__days">
+        <ButtonBar options={days_in_month} bind:selected={selected_dom} />
+      </div>
+    {/if}
   </div>
 </div>
 
