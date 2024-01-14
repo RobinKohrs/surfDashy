@@ -6,6 +6,7 @@
   let mapElement;
   let map;
   export let height;
+  console.log("height: ", height);
 
   export let tile_layer_options = { ext: "png", attribution: "" };
   export let tile_layer = {
@@ -25,12 +26,17 @@
 
     dispatch("mapLoaded", { L, map });
   });
+
+  $: if (map && height) {
+    map.invalidateSize();
+    map.setZoom(12);
+  }
 </script>
 
 <div
   id="map"
   class="overflow-hidden outline-none"
-  style={height ? `height: ${height}px;` : ""}
+  style={height ? `height: ${height}px;` : "200px"}
   bind:this={mapElement}
 />
 

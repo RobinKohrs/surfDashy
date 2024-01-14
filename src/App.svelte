@@ -81,6 +81,7 @@
     ]);
 
     // draw the data
+    console.log("drawing");
     drawMap(
       map,
       data_current,
@@ -96,21 +97,23 @@
 </script>
 
 <div class="app__container min-h-screen">
-  <div>
+  <!-- <div>
     <SizeLegend />
-  </div>
+  </div> -->
   <div class="z-[1] content-container" bind:clientHeight={mapHeight}>
-    <LeafletMap
-      on:mapLoaded={initMap}
-      height={mapHeight}
-      set_view={[-22.948787528229474, -43.239910128238364]}
-    />
+    {#if mapHeight > 0}
+      <LeafletMap
+        on:mapLoaded={initMap}
+        height={mapHeight}
+        set_view={[-22.948787528229474, -43.239910128238364]}
+      />
+    {/if}
   </div>
 </div>
 
 <style>
   .app__container {
     display: grid;
-    grid-template-rows: 100px 1fr 100px;
+    grid-template-rows: 1fr;
   }
 </style>
