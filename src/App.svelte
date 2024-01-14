@@ -81,7 +81,6 @@
     ]);
 
     // draw the data
-    console.log("drawing");
     drawMap(
       map,
       data_current,
