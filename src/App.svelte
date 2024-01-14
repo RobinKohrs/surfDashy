@@ -40,6 +40,9 @@
   function initMap(event) {
     map = event.detail.map;
     L = event.detail.L;
+    // setTimeout(() => {
+    //   map.setZoom(12);
+    // }, 100);
   }
 
   // get the data for that date and variable
@@ -53,7 +56,6 @@
   }
 
   let active_spot_id, active_spot_marker, active_spot_data;
-  $: console.log("asd: ", active_spot_data);
   const onSpotClick = (event, marker, spot) => {
     // if there is an active id already
     if (active_spot_id) {
@@ -93,17 +95,22 @@
   // TODO: gradually rebuild app svelte from _App.svelte!!
 </script>
 
-<div class="app__container flex flex-col min-h-screen">
+<div class="app__container min-h-screen">
   <div>
     <SizeLegend />
   </div>
-  <div class="z-[1] content-container flex-grow" bind:this={mapContainer}>
-    {#if mapHeight}
-      <LeafletMap
-        on:mapLoaded={initMap}
-        {mapHeight}
-        set_view={[-22.948787528229474, -43.239910128238364]}
-      />
-    {/if}
+  <div class="z-[1] content-container" bind:clientHeight={mapHeight}>
+    <LeafletMap
+      on:mapLoaded={initMap}
+      height={mapHeight}
+      set_view={[-22.948787528229474, -43.239910128238364]}
+    />
   </div>
 </div>
+
+<style>
+  .app__container {
+    display: grid;
+    grid-template-rows: 100px 1fr 100px;
+  }
+</style>

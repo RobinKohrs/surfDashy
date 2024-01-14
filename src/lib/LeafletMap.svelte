@@ -5,8 +5,8 @@
 
   let mapElement;
   let map;
+  export let height;
 
-  export let mapHeight;
   export let tile_layer_options = { ext: "png", attribution: "" };
   export let tile_layer = {
     layer:
@@ -29,18 +29,13 @@
 
 <div
   id="map"
-  style:height={`${mapHeight}px`}
-  class="overflow-hidden outline-none h-full"
+  class="overflow-hidden outline-none"
+  style={height ? `height: ${height}px;` : ""}
   bind:this={mapElement}
 />
 
 <style>
   @import "leaflet/dist/leaflet.css";
-
-  #map {
-    width: 100%;
-    height: 100%;
-  }
 
   .vignette {
     pointer-events: none;
