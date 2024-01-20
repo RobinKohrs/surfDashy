@@ -1,18 +1,15 @@
 <script>
   import { onMount, onDestroy, createEventDispatcher } from "svelte";
   import * as L from "leaflet";
+  // Import the Leaflet MapTiler Plugin
+  import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
+
   const dispatch = createEventDispatcher();
 
   let mapElement;
   let map;
   export let height;
   console.log("height: ", height);
-
-  export let tile_layer_options = { ext: "png", attribution: "" };
-  export let tile_layer = {
-    layer:
-      "https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.{ext}",
-  };
 
   // map options
   export let set_view = [48.2183974, 16.3807465];
@@ -22,8 +19,16 @@
     map = L.map(mapElement, {
       preferCanvas: true,
     }).setView(set_view, zoom);
-    L.tileLayer(tile_layer.layer, tile_layer_options).addTo(map);
 
+    L.tileLayer
+      .wms(
+        "https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv?version=1.3.0",
+        {
+          layers: "GEBCO_LATEST",
+          attribution: "GEBCO",
+        }
+      )
+      .addTo(map);
     dispatch("mapLoaded", { L, map });
   });
 
