@@ -1,0 +1,30 @@
+{
+  "primaryColor": "#8c66b2",
+  "activeMarkerColor": "cornflowerblue",
+  "variables": [
+    {
+      "id": "daily_mean_water_temperature_max",
+      "display": "Water Temperature Max",
+      "suffix": "°C"
+    },
+    {
+      "id": "daily_mean_water_temperature_min",
+      "display": "Water Temperature Min",
+      "suffix": "°C"
+    },
+    {
+      "id": "daily_mean_swell_rating",
+      "display": "Swell Rating"
+    },
+    {
+      "id": "daily_mean_wave_height_max",
+      "display": "Swell Height Max",
+      "suffix": "m"
+    },
+    {
+      "id": "daily_mean_wave_height_min",
+      "display": "Swell Height Min",
+      "suffix": "m"
+    }
+  ]
+}
