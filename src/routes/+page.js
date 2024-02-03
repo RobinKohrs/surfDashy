@@ -2,7 +2,6 @@ import { csv } from "d3-fetch";
 const d3 = { csv };
 
 export async function load({ fetch }) {
-  console.log("in load funciton");
   // `fetch` understands the relative path and saves the response
   // inside the HTML to be reused avoiding additional requests
   const response = await fetch(
@@ -15,7 +14,6 @@ export async function load({ fetch }) {
   let selected_date = dates_with_data[dates_with_data.length - 1];
 
   let d = await d3.csv("data/spots.csv");
-  console.log("d: ", d);
 
   return { selected_date: selected_date, all_dates: dates_with_data };
 }

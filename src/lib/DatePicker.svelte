@@ -64,55 +64,47 @@
   }
 </script>
 
-<div
-  use:clickOutside={() => (show_times = !show_times)}
-  class="settings__container fixed left-0 right-0 z-[2000] bg-[rgba(255,255,255,.8)] w-full max-w-[1080px] mx-auto p-6 rounded-b-xl"
+<button
+  class="absolute top-0 right-0 w-10 h-10 m-2 z-[3000]"
+  on:click={handleClose}
 >
-  <button
-    class="absolute top-0 right-0 w-10 h-10 m-2 z-[3000]"
-    on:click={handleClose}
-  >
-    {@html clear}
-  </button>
+  {@html clear}
+</button>
 
-  <div class="flex flex-wrap">
-    <div class="select__per_day_month">
-      <span class="underline">Daily or Monthly Data</span>
-      <ButtonBar
-        options={[
-          { display: "per Day", id: "per_day" },
-          { display: "per Month", id: "per_month" },
-        ]}
-        bind:selected={mode}
-      />
-    </div>
-
-    <div class="select__year">
-      <span class="underline">Year:</span>
-      <ButtonBar options={years_with_data} bind:selected={selected_year} />
-    </div>
+<div class="flex flex-wrap">
+  <div class="select__per_day_month">
+    <span class="underline">Daily or Monthly Data</span>
+    <ButtonBar
+      options={[
+        { display: "per Day", id: "per_day" },
+        { display: "per Month", id: "per_month" },
+      ]}
+      bind:selected={mode}
+    />
   </div>
 
-  <div class="select__month">
-    <span class="underline">Month:</span>
-    <ButtonBar options={months} bind:selected={selected_month} />
+  <div class="select__year">
+    <span class="underline">Year:</span>
+    <ButtonBar options={years_with_data} bind:selected={selected_year} />
   </div>
+</div>
 
-  {#if mode === "per_day"}
-    <div class="buttonbar__days">
-      <span class="underline">Day:</span>
-      <ButtonBar
-        options={days_in_selected_month}
-        bind:selected={selected_dom}
-      />
-    </div>
-  {/if}
+<div class="select__month">
+  <span class="underline">Month:</span>
+  <ButtonBar options={months} bind:selected={selected_month} />
+</div>
 
-  <!-- <div class="selected_date text-center text-xl py-4">
+{#if mode === "per_day"}
+  <div class="buttonbar__days">
+    <span class="underline">Day:</span>
+    <ButtonBar options={days_in_selected_month} bind:selected={selected_dom} />
+  </div>
+{/if}
+
+<!-- <div class="selected_date text-center text-xl py-4">
     {#if mode === "per_day"}
       {selected_date.toDateString("de")}
     {:else}
       {`${selected_year} / ${selected_month + 1}`}
     {/if}
   </div> -->
-</div>

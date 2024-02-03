@@ -8,6 +8,7 @@
   import params from "$lib/assets/params.json";
   import MobileWarning from "$lib/Warning.svelte";
   import InfoPanel from "$lib/InfoPanel.svelte";
+  import Hamburger from "$lib/ui/Hamburger.svelte";
 
   import {
     getScales,
@@ -18,6 +19,7 @@
     drawMap,
     resetStyle,
   } from "$lib/utils";
+  import Overlay from "../lib/ui/Overlay.svelte";
   const d3 = { csv, json };
 
   // Iniial data
@@ -165,6 +167,8 @@
       date_display = formatter_day.format(selected_date);
     }
   }
+
+  let show_menu = false;
 </script>
 
 <MobileWarning />
@@ -172,13 +176,17 @@
 
 <div class="app min-h-screen h-screen">
   <nav
-    class="navbar absolute top-0 w-full rounded-b-lg text-xl z-[1000] flex justify-around items-stretch"
+    class="h-12 navbar absolute top-0 w-full rounded-b-lg text-xl z-[1000] flex justify-around items-stretch"
   >
     <div
-      class="navbar settings h-12 aspect-square rounded-b-lg overflow-hidden bg-[rgba(255,255,255,.7)]"
+      class="navbar settings h-full aspect-square rounded-b-lg overflow-hidden bg-[rgba(255,255,255,.7)]"
     >
-      <button disabled={show_times || show_search}>
-        {@html settings}
+      <button
+        class="w-full h-full"
+        disabled={show_times || show_search}
+        on:click={() => (show_menu = !show_menu)}
+      >
+        <Hamburger width={"100%"} ariaExpanded={show_menu} />
       </button>
     </div>
 
@@ -208,43 +216,49 @@
     </div>
   </nav>
 
-  {#if show_times}
-    <DatePicker
-      available_days={data_dates}
-      bind:mode
-      bind:show_times
-      bind:selected_date
-    />
-  {/if}
+  <!-- for any potential overlay (Menu, Dates, Search) -->
+  <div class="overlay-container pt-14 absolute">
+    {#if show_menu}
+      <Overlay bind:show_overlay={show_menu}>menu</Overlay>
+    {/if}
+    {#if show_times}
+      <Overlay bind:show_overlay={show_times}>
+        <DatePicker
+          available_days={data_dates}
+          bind:mode
+          bind:show_times
+          bind:selected_date
+        />
+      </Overlay>
+    {/if}
 
-  {#if show_search}
-    <div
-      class="z-[2000] h-12 absolute top-1/2 -translate-y-[300%] left-1/2 -translate-x-1/2 rounded-lg bg-[rgba(255,255,255,.9)]"
-    >
-      <Search
-        bind:show_search
-        searchable={data_coordinates}
-        options={{ keys: ["name"] }}
-        on:closeSearch={() => {
-          show_search = false;
-        }}
-        on:selectSearch={(e) => {
-          let { detail: item } = e;
+    {#if show_search}
+      <Overlay bind:show_overlay={show_search}>
+        <Search
+          bind:show_search
+          searchable={data_coordinates}
+          options={{ keys: ["name"] }}
+          on:closeSearch={() => {
+            show_search = false;
+          }}
+          on:selectSearch={(e) => {
+            let { detail: item } = e;
 
-          handleSelect(map, e);
+            handleSelect(map, e);
 
-          // find the marker
-          let marker = current_circle_marker_all.find((ele, i) => {
-            return ele.spot["_id"] === item["id"];
-          });
+            // find the marker
+            let marker = current_circle_marker_all.find((ele, i) => {
+              return ele.spot["_id"] === item["id"];
+            });
 
-          onSpotClick("", marker.marker, marker.spot);
+            onSpotClick("", marker.marker, marker.spot);
 
-          show_search = !show_search;
-        }}
-      />
-    </div>
-  {/if}
+            show_search = !show_search;
+          }}
+        />
+      </Overlay>
+    {/if}
+  </div>
 
   {#if windowHeight}
     <LeafletMap
