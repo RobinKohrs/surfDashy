@@ -1,4 +1,6 @@
 <script>
+  import { onMount } from "svelte";
+
   import LeafletMap from "$lib/LeafletMap.svelte";
   import { tweened } from "svelte/motion";
   import { settings, search, time } from "$lib/assets/icons";
@@ -19,7 +21,9 @@
     resetStyle,
   } from "$lib/utils";
   import Overlay from "../lib/ui/Overlay.svelte";
-  import NavbarMap from "../lib/ui/NavbarMap.svelte";
+  import Navbar from "../lib/ui/Navbar.svelte";
+
+  import Menu from "../lib/ui/Menu.svelte";
   const d3 = { csv, json };
 
   // Iniial data
@@ -155,21 +159,32 @@
 </script>
 
 <MobileWarning />
-<svelte:window bind:innerHeight={windowHeight} />
+<svelte:window
+  bind:innerHeight={windowHeight}
+  on:keyup={(e) => {
+    if (e.key === "k") {
+      if (selectedOverlay !== "search") {
+        selectedOverlay = "search";
+      } else {
+        selectedOverlay = "none";
+      }
+    }
+  }}
+/>
 
 <div class="app min-h-screen h-screen">
-  <NavbarMap
+  <Navbar
     {date_display}
     showHamburger={selectedOverlay === "menu"}
     on:overlaySelect={({ detail }) => (selectedOverlay = detail)}
   />
 
   <!-- for any potential overlay (Menu, Dates, Search) -->
-  <div class="overlay-container pt-14 absolute">
+  <div class="overlay-container pt-14 absolute w-full">
     {#if selectedOverlay !== "none"}
-      <Overlay bind:selectedOverlay>
+      <Overlay on:clickOutside={() => (selectedOverlay = "none")}>
         {#if selectedOverlay == "menu"}
-          Menu
+          <Menu />
         {:else if selectedOverlay == "date_picker"}
           <DatePicker
             available_days={data_dates}
@@ -181,7 +196,7 @@
             searchable={data_coordinates}
             options={{ keys: ["name"] }}
             on:closeSearch={() => {
-              show_search = false;
+              selectedOverlay = "none";
             }}
             on:selectSearch={(e) => {
               let { detail: item } = e;
@@ -195,7 +210,7 @@
 
               onSpotClick("", marker.marker, marker.spot);
 
-              show_search = !show_search;
+              selectedOverlay = "none";
             }}
           />
         {/if}

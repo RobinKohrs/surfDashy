@@ -18,7 +18,7 @@
 </script>
 
 <nav
-  class="h-12 navbar fixed top-0 w-full rounded-b-lg text-xl z-[1000] flex justify-around items-stretch"
+  class="h-12 navbar fixed top-0 inset-x-0 rounded-b-lg text-xl z-[1000] flex justify-between items-stretch max-w-[1080px] mx-auto"
 >
   <button
     class="nav menu h-full w-12 bg-[rgba(255,255,255,.7)] px-2 rounded-b-lg"

@@ -1,5 +1,6 @@
 <script>
-  import Overlay from "./Overlay.svelte";
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
   import { clickOutside } from "$lib/utils";
   export let selectedOverlay;
   export let classList = ["p-2", "bg-red-300"];
@@ -16,8 +17,10 @@
 
 <div
   bind:this={overlayContainer}
-  use:clickOutside={() => (selectedOverlay = "none")}
-  class="overlay fixed left-0 right-0 bg-[rgba(255,255,255,.8)] w-[95%] mx-auto max-w-[1080px] rounded-xl z-[4000]"
+  use:clickOutside={() => {
+    dispatch("clickOutside");
+  }}
+  class="overlay absolute left-0 right-0 bg-[rgba(255,255,255,.8)] w-[95%] mx-auto max-w-[1080px] rounded-xl z-[4000]"
 >
   <div class="overlayContainer__inner bg-[rgba(255,255,255,.8)] p-2 rounded-xl">
     <slot />

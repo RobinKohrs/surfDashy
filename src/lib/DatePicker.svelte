@@ -64,13 +64,6 @@
   }
 </script>
 
-<button
-  class="absolute top-0 right-0 w-10 h-10 m-2 z-[3000]"
-  on:click={handleClose}
->
-  {@html clear}
-</button>
-
 <div class="flex flex-wrap">
   <div class="select__per_day_month">
     <span class="underline">Daily or Monthly Data</span>

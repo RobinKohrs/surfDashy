@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher } from "svelte";
-  import { slide } from "svelte/transition";
+  import { slide, fly } from "svelte/transition";
   const dispatch = createEventDispatcher();
 
   // FUSE
@@ -96,6 +96,7 @@
   >
   <div class="search h-full relative">
     <input
+      spellcheck="false"
       autofocus
       class="{suggestions.length > 0
         ? 'rounded-t-lg'
@@ -129,15 +130,19 @@
 
   {#if suggestions.length > 0}
     <ul
-      transition:slide
+      transition:fly
       id="menu"
       role="menu"
       class="suggestions-container my-1 rounded-b-lg overflow-hidden"
     >
       {#each suggestions as suggestion, i}
         <li
-          class="w-full h-full bg-white p-4 py-1 border text-lg hover:bg-red-200"
+          class="w-full h-full bg-white p-4 py-1 border text-lg hover:bg-red-200 {i ===
+          4
+            ? 'rounded-b-lg'
+            : ''}"
           style:background={selected_index === i ? "cornflowerblue" : "white"}
+          style:border={selected_index === i ? "2px solid black" : ""}
         >
           <button
             class="w-full h-full"
