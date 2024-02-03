@@ -8,7 +8,6 @@
   import params from "$lib/assets/params.json";
   import MobileWarning from "$lib/Warning.svelte";
   import InfoPanel from "$lib/InfoPanel.svelte";
-  import Hamburger from "$lib/ui/Hamburger.svelte";
 
   import {
     getScales,
@@ -20,6 +19,7 @@
     resetStyle,
   } from "$lib/utils";
   import Overlay from "../lib/ui/Overlay.svelte";
+  import NavbarMap from "../lib/ui/NavbarMap.svelte";
   const d3 = { csv, json };
 
   // Iniial data
@@ -43,14 +43,7 @@
   function initMap(event) {
     map = event.detail.map;
     L = event.detail.L;
-    // setTimeout(() => {
-    //   map.setZoom(12);
-    // }, 100);
   }
-
-  // setTimeout(() => {
-  //   map.setZoom(5);
-  // }, 2000);
 
   // get the data for that date and variable
   let selected_variable_color = params.variables[0]["id"];
@@ -123,16 +116,6 @@
     );
   }
 
-  let show_settings;
-
-  let show_times = false;
-  function showTimes() {
-    show_times = !show_times;
-  }
-
-  // the search
-  let show_search;
-
   ///////
   let currentSizeVal = tweened(0, {
     duration: 300,
@@ -168,94 +151,54 @@
     }
   }
 
-  let show_menu = false;
+  let selectedOverlay = "none";
 </script>
 
 <MobileWarning />
 <svelte:window bind:innerHeight={windowHeight} />
 
 <div class="app min-h-screen h-screen">
-  <nav
-    class="h-12 navbar absolute top-0 w-full rounded-b-lg text-xl z-[1000] flex justify-around items-stretch"
-  >
-    <div
-      class="navbar settings h-full aspect-square rounded-b-lg overflow-hidden bg-[rgba(255,255,255,.7)]"
-    >
-      <button
-        class="w-full h-full"
-        disabled={show_times || show_search}
-        on:click={() => (show_menu = !show_menu)}
-      >
-        <Hamburger width={"100%"} ariaExpanded={show_menu} />
-      </button>
-    </div>
-
-    <div
-      class="headline item-date rounded-b-lg overflow-hidden bg-[rgba(255,255,255,.7)] px-2 flex items-center"
-    >
-      <button
-        disabled={show_search || show_settings}
-        on:click={showTimes}
-        class="h-full w-full"
-      >
-        {#if selected_date}
-          {date_display}
-        {/if}
-      </button>
-    </div>
-
-    <div
-      class="headline item-search h-12 aspect-square rounded-b-lg overflow-hidden bg-[rgba(255,255,255,.8)]"
-    >
-      <button
-        disabled={show_times || show_settings}
-        on:click={() => (show_search = true)}
-      >
-        {@html search}
-      </button>
-    </div>
-  </nav>
+  <NavbarMap
+    {date_display}
+    showHamburger={selectedOverlay === "menu"}
+    on:overlaySelect={({ detail }) => (selectedOverlay = detail)}
+  />
 
   <!-- for any potential overlay (Menu, Dates, Search) -->
   <div class="overlay-container pt-14 absolute">
-    {#if show_menu}
-      <Overlay bind:show_overlay={show_menu}>menu</Overlay>
-    {/if}
-    {#if show_times}
-      <Overlay bind:show_overlay={show_times}>
-        <DatePicker
-          available_days={data_dates}
-          bind:mode
-          bind:show_times
-          bind:selected_date
-        />
-      </Overlay>
-    {/if}
+    {#if selectedOverlay !== "none"}
+      <Overlay bind:selectedOverlay>
+        {#if selectedOverlay == "menu"}
+          Menu
+        {:else if selectedOverlay == "date_picker"}
+          <DatePicker
+            available_days={data_dates}
+            bind:mode
+            bind:selected_date
+          />
+        {:else}
+          <Search
+            searchable={data_coordinates}
+            options={{ keys: ["name"] }}
+            on:closeSearch={() => {
+              show_search = false;
+            }}
+            on:selectSearch={(e) => {
+              let { detail: item } = e;
 
-    {#if show_search}
-      <Overlay bind:show_overlay={show_search}>
-        <Search
-          bind:show_search
-          searchable={data_coordinates}
-          options={{ keys: ["name"] }}
-          on:closeSearch={() => {
-            show_search = false;
-          }}
-          on:selectSearch={(e) => {
-            let { detail: item } = e;
+              handleSelect(map, e);
 
-            handleSelect(map, e);
+              // find the marker
+              let marker = current_circle_marker_all.find((ele, i) => {
+                return ele.spot["_id"] === item["id"];
+              });
 
-            // find the marker
-            let marker = current_circle_marker_all.find((ele, i) => {
-              return ele.spot["_id"] === item["id"];
-            });
+              onSpotClick("", marker.marker, marker.spot);
 
-            onSpotClick("", marker.marker, marker.spot);
-
-            show_search = !show_search;
-          }}
-        />
+              show_search = !show_search;
+            }}
+          />
+        {/if}
       </Overlay>
     {/if}
   </div>
@@ -283,11 +226,6 @@
 </div>
 
 <style>
-  /* .content__container {
-    display: grid;
-    grid-template-rows: auto 1fr;
-  } */
-
   .spot-tooltip > div {
     display: flex;
     justify-content: space-between;
