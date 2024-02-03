@@ -6,6 +6,7 @@
   export let color_on = "cornflowerblue";
 
   function handleClick(o) {
+    console.log("clicked on button");
     selected = o.id;
   }
 

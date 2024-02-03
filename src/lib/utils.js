@@ -298,7 +298,7 @@ export function build_selected_options(
 /** Dispatch event on click outside of node */
 export function clickOutside(node, callbackFn) {
   const handleClick = (event) => {
-    event.stopPropagation();
+    // event.stopPropagation();
     if (node && !node.contains(event.target) && !event.defaultPrevented) {
       callbackFn();
     }

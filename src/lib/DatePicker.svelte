@@ -65,7 +65,7 @@
 </script>
 
 <div class="flex flex-wrap">
-  <div class="select__per_day_month">
+  <div class="select per_day_month">
     <span class="underline">Daily or Monthly Data</span>
     <ButtonBar
       options={[
@@ -76,13 +76,13 @@
     />
   </div>
 
-  <div class="select__year">
+  <div class="select year">
     <span class="underline">Year:</span>
     <ButtonBar options={years_with_data} bind:selected={selected_year} />
   </div>
 </div>
 
-<div class="select__month">
+<div class="select month">
   <span class="underline">Month:</span>
   <ButtonBar options={months} bind:selected={selected_month} />
 </div>
@@ -101,3 +101,16 @@
       {`${selected_year} / ${selected_month + 1}`}
     {/if}
   </div> -->
+
+<style>
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .select::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .example {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+</style>
