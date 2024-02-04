@@ -3,7 +3,6 @@
 
   import LeafletMap from "$lib/LeafletMap.svelte";
   import { tweened } from "svelte/motion";
-  import { settings, search, time } from "$lib/assets/icons";
   import { csv, json } from "d3-fetch";
   import Search from "$lib/Search.svelte";
   import DatePicker from "$lib/DatePicker.svelte";
@@ -158,7 +157,7 @@
   let selectedOverlay = "none";
 </script>
 
-<MobileWarning />
+<!-- <MobileWarning /> -->
 <svelte:window
   bind:innerHeight={windowHeight}
   on:keyup={(e) => {
@@ -182,7 +181,11 @@
   <!-- for any potential overlay (Menu, Dates, Search) -->
   <div class="overlay-container pt-14 absolute w-full">
     {#if selectedOverlay !== "none"}
-      <Overlay on:clickOutside={() => (selectedOverlay = "none")}>
+      <Overlay
+        on:clickOutside={() => {
+          selectedOverlay = "none";
+        }}
+      >
         {#if selectedOverlay == "menu"}
           <Menu />
         {:else if selectedOverlay == "date_picker"}

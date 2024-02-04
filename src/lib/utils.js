@@ -122,7 +122,6 @@ export function addBlinkingIcon(map, coords) {
     // Set marker width and height
     // ,iconAnchor: [11,11]
   });
-  console.log("cssIcon: ", cssIcon);
 
   // L.marker(coords, { icon: cssIcon }).addTo(map);
 }

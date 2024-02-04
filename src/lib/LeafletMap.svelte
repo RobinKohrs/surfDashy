@@ -36,6 +36,15 @@
     //   )
     //   .addTo(map);
 
+    // L.tileLayer
+    //   .wms(
+    //     "http://wmts.marine.copernicus.eu/teroWmts/?service=WMTS&version=1.0.0&request=GetTile",
+    //     {
+    //       layers: "GLOBAL_MULTIYEAR_WAV_001_032/cmems_mod_glo_wav_my_0.2_PT3H-i_202112/VHM0",
+    //     }
+    //   )
+    //   .addTo(map);
+
     const mtLayer = new MaptilerLayer({
       apiKey: "YED34JdAn8w32PnMgk9m",
       style:

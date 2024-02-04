@@ -1,6 +1,10 @@
 <script>
   export let menuoptions = [
     {
+      display: "Map",
+      route: "/",
+    },
+    {
       display: "Statistics",
       route: "statistics",
     },
