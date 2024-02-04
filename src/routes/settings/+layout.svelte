@@ -30,7 +30,7 @@
   <h1 class="">Settings</h1>
   <button
     on:click={() => setSelected("settings")}
-    class="nav settings h-full w-12 grid place-items-center"
+    class="nav settings h-full w-12 grid place-items-center invisible"
   >
     <Settings class="h-12" />
   </button>

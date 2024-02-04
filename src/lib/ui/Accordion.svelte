@@ -77,7 +77,7 @@
   /* The styles */
 
   :global(.accordion) {
-    min-width: 320px;
+    min-width: 260px;
     width: 80%;
     margin: 0 auto;
     background: white;
