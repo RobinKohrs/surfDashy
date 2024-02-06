@@ -16,10 +16,6 @@
       display: "About",
       route: "about",
     },
-    {
-      display: "Random Facts",
-      route: "randfacts",
-    },
   ];
 </script>
 

@@ -100,7 +100,7 @@
       autofocus
       class="{suggestions.length > 0
         ? 'rounded-t-lg'
-        : 'rounded-lg'} overflow-hidden h-full text-2xl block w-full p-4 pe-12 dt:pe-14 text-gray-900 outline-none"
+        : 'rounded-lg'} bg-transparent overflow-hidden h-full text-2xl block w-full p-4 pe-12 dt:pe-14 text-gray-900 outline-none"
       on:keyup={handleKeyUp}
       autocomplete="off"
       placeholder="Search for surfspot"

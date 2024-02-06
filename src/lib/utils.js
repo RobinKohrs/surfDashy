@@ -143,6 +143,7 @@ export function getAllDaysInMonth(year, month) {
   }
   days_in_month = days.map((e) => {
     return {
+      date: e,
       display: e.getDate(),
       id: e.getDate(),
     };

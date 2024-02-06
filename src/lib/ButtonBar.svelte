@@ -40,10 +40,19 @@
         <button
           on:click={() => handleClick(o)}
           style:background-color={o.id == selected ? color_on : "white"}
-          class="border-black border px-2 py-1 {o.id === selected
+          class="relative border-black border px-2 py-1 {o.id === selected
             ? `selected_${selected}`
-            : ''}">{o.display}</button
+            : ''}"
         >
+          {o.display}
+          {#if Object.keys(o).includes("hasData")}
+            <span
+              class="absolute rounded-[100vw] h-[6px] aspect-square {o.hasData
+                ? 'bg-green-400'
+                : 'bg-red-400'} top-[2px] right-[2px]"
+            ></span>
+          {/if}
+        </button>
       {/each}
     {:else}
       <button

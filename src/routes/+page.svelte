@@ -135,13 +135,13 @@
   // the mode of querying the data
   let mode = "per_day";
   const formatter_month = new Intl.DateTimeFormat("en-US", {
-    month: "2-digit",
+    month: "long",
     year: "numeric",
   });
 
   const formatter_day = new Intl.DateTimeFormat("en-US", {
-    day: "2-digit",
-    month: "2-digit",
+    day: "numeric",
+    month: "long",
     year: "numeric",
   });
 
@@ -160,12 +160,29 @@
 <!-- <MobileWarning /> -->
 <svelte:window
   bind:innerHeight={windowHeight}
-  on:keyup={(e) => {
-    if (e.key === "k") {
+  on:keydown={(e) => {
+    if (selectedOverlay === "none") {
+      e.preventDefault();
+    }
+    if (e.key === "k" && e.ctrlKey === true) {
       if (selectedOverlay !== "search") {
         selectedOverlay = "search";
       } else {
         selectedOverlay = "none";
+      }
+    }
+    if (e.key === "d" && e.ctrlKey === true) {
+      if (selectedOverlay !== "date_picker") {
+        selectedOverlay = "date_picker";
+      } else {
+        selectedOverlay = "none";
+      }
+    }
+    if (e.key === "m" && e.ctrlKey === true) {
+      if (selectedOverlay !== "menu") {
+        selectedOverlay = "menu";
+      } else {
+        selectedOverlay = "menu";
       }
     }
   }}

@@ -37,7 +37,7 @@
 </nav>
 
 <!-- for any potential overlay (Menu, Dates, Search) -->
-<div class="overlay-container w-full pt-14 fixed z-[000]">
+<div class="overlay-container w-full pt-14 fixed z-[100]">
   {#if selectedOverlay !== "none"}
     <Overlay
       on:clickOutside={() => {

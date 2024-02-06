@@ -1,14 +1,16 @@
 <script>
-  import { slide, fly } from "svelte/transition";
-
   import ButtonBar from "$lib/ButtonBar.svelte";
-  import { clear } from "$lib/assets/icons";
-  import { createEventDispatcher } from "svelte";
-  const dispatch = createEventDispatcher();
 
-  import { getAllDaysInMonth, group_by_year, clickOutside } from "$lib/utils";
+  import { getAllDaysInMonth, group_by_year } from "$lib/utils";
 
   export let available_days = [];
+  let available_times;
+  $: if (available_days.length > 0) {
+    available_times = available_days.map(
+      (e) => `${e.getFullYear()}_${e.getMonth()}_${e.getDate()}`
+    );
+  }
+
   export let selected_date;
   export let mode = "per_day";
   export let show_times;
@@ -48,6 +50,11 @@
   let days_in_selected_month;
   $: if (selected_year || selected_month) {
     days_in_selected_month = getAllDaysInMonth(selected_year, selected_month);
+    days_in_selected_month.forEach((d) => {
+      let _day = `${d.date.getFullYear()}_${d.date.getMonth()}_${d.date.getDate()}`;
+      let inc = available_times.includes(_day);
+      d["hasData"] = inc;
+    });
   }
 
   $: if (selected_year || selected_month || selected_dom) {
