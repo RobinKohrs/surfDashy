@@ -3,11 +3,13 @@
 
   import { getAllDaysInMonth, group_by_year } from "$lib/utils";
 
-  export let available_days = [];
-  let available_times;
-  $: if (available_days.length > 0) {
-    available_times = available_days.map(
-      (e) => `${e.getFullYear()}_${e.getMonth()}_${e.getDate()}`
+  export let dates_raw = [];
+  let available_days = [];
+  let available_times = [];
+  $: if (dates_raw.length > 0) {
+    available_days = dates_raw.map((e) => e.date);
+    available_times = dates_raw.map(
+      (e) => `${e.date.getFullYear()}_${e.date.getMonth()}_${e.date.getDate()}`
     );
   }
 

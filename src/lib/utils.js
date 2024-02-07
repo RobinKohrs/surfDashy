@@ -7,28 +7,27 @@ export async function getInitialData() {
   let path_dates =
     "https://raw.githubusercontent.com/RobinKohrs/r-cadeasondas/main/data_preprocessed/daily_data_global/index_days.json";
 
-  let path_spot_coordinates = "data/spots.csv";
-
-  // let dates_with_data;
-  // let selected_date;
-  // d3.json(path_dates).then((d) => {
-  //   let dd = d.map((e) => new Date(e.replaceAll("_", "-")));
-  //   dates_with_data = dd;
-  //   selected_date = dates_with_data[dates_with_data.length - 1];
-  // });
-
-  // return { dates_with_data, selected_date };
-
   // dates with data
+  // SvelteKit is going to generate the types
+  let dates = [];
   let dates_raw = await d3.json(path_dates);
-  let dates_with_data = dates_raw.map((e) => new Date(e.replaceAll("_", "-")));
-  let selected_date = dates_with_data[dates_with_data.length - 1];
+
+  dates_raw.forEach((e) => {
+    let date = new Date(e.date.replaceAll("_", "-"));
+    dates.push({
+      ...e,
+      date,
+    });
+  });
+
+  // let selected_date = dates_with_data[dates_with_data.length - 1];
+  let selected_date = dates[dates.length - 1]["date"];
 
   // coordinates for spots
   let spots_path = "/data/spots.csv";
   let data_coordinates = await d3.csv(spots_path);
 
-  return { dates_with_data, selected_date, data_coordinates };
+  return { dates_raw: dates, selected_date, data_coordinates };
 }
 
 export function getAllDaysInYear(year) {

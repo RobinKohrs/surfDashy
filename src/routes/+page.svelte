@@ -30,7 +30,7 @@
   let data_dates, selected_date;
   let data_coordinates;
   getInitialData().then((d) => {
-    (data_dates = d.dates_with_data),
+    (data_dates = d.dates_raw),
       (selected_date = d.selected_date),
       (data_coordinates = d.data_coordinates);
   });
@@ -53,8 +53,15 @@
   let selected_variable_size = params.variables[3]["id"];
   let data_current;
   let selected_time;
+  let selected_date_info;
   $: if (selected_date) {
     selected_time = selected_date.getTime();
+    selected_date_info = data_dates.find((e) => {
+      return (
+        `${e.date.getFullYear()}_${e.date.getMonth()}_${e.date.getDate()}` ===
+        `${selected_date.getFullYear()}_${selected_date.getMonth()}_${selected_date.getDate()}`
+      );
+    });
   }
 
   $: if ((selected_time && map) || mode === "per_month") {
@@ -154,6 +161,13 @@
     }
   }
 
+  let latest_time_display;
+  $: if (selected_date_info) {
+    latest_time_display = `${new Date(
+      selected_date_info["latest_time"]
+    ).getHours()}:00`;
+  }
+
   let selectedOverlay = "none";
 </script>
 
@@ -161,10 +175,8 @@
 <svelte:window
   bind:innerHeight={windowHeight}
   on:keydown={(e) => {
-    if (selectedOverlay === "none") {
-      e.preventDefault();
-    }
     if (e.key === "k" && e.ctrlKey === true) {
+      e.preventDefault();
       if (selectedOverlay !== "search") {
         selectedOverlay = "search";
       } else {
@@ -172,6 +184,7 @@
       }
     }
     if (e.key === "d" && e.ctrlKey === true) {
+      e.preventDefault();
       if (selectedOverlay !== "date_picker") {
         selectedOverlay = "date_picker";
       } else {
@@ -179,6 +192,7 @@
       }
     }
     if (e.key === "m" && e.ctrlKey === true) {
+      e.preventDefault();
       if (selectedOverlay !== "menu") {
         selectedOverlay = "menu";
       } else {
@@ -191,6 +205,7 @@
 <div class="app min-h-screen h-screen">
   <Navbar
     {date_display}
+    {latest_time_display}
     showHamburger={selectedOverlay === "menu"}
     on:overlaySelect={({ detail }) => (selectedOverlay = detail)}
   />
@@ -206,11 +221,7 @@
         {#if selectedOverlay == "menu"}
           <Menu />
         {:else if selectedOverlay == "date_picker"}
-          <DatePicker
-            available_days={data_dates}
-            bind:mode
-            bind:selected_date
-          />
+          <DatePicker dates_raw={data_dates} bind:mode bind:selected_date />
         {:else}
           <Search
             searchable={data_coordinates}

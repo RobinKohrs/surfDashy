@@ -5,6 +5,8 @@
   import { SearchIcon } from "lucide-svelte";
   export let showHamburger;
   export let date_display = "";
+  export let latest_time_display;
+  $: console.log("time: ", latest_time_display);
   let selectedOverlay = "none";
 
   function setSelected(clickedMode) {
@@ -29,9 +31,12 @@
 
   <button
     on:click={() => setSelected("date_picker")}
-    class="bg-[rgba(255,255,255,.7)] px-2 rounded-b-lg"
+    class="bg-[rgba(255,255,255,.7)] px-2 rounded-b-lg flex flex-col"
   >
-    {date_display}
+    <span>{date_display}</span>
+    {#if latest_time_display}
+      <span class="text-xs">{latest_time_display}</span>
+    {/if}
   </button>
 
   <button
