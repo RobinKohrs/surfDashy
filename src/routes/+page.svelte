@@ -163,9 +163,13 @@
 
   let latest_time_display;
   $: if (selected_date_info) {
-    latest_time_display = `${new Date(
-      selected_date_info["latest_time"]
-    ).getHours()}:00`;
+    if (mode === "per_month") {
+      latest_time_display = "";
+    } else {
+      latest_time_display = `${new Date(
+        selected_date_info["latest_time"]
+      ).getHours()}:00`;
+    }
   }
 
   let selectedOverlay = "none";
