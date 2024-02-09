@@ -1,6 +1,6 @@
 <script>
   import Hamburger from "$lib/ui/Hamburger.svelte";
-  import { Settings } from "lucide-svelte";
+  import { Settings, Map } from "lucide-svelte";
   import Menu from "$lib/ui/Menu.svelte";
   import Overlay from "$lib/ui/Overlay.svelte";
 
@@ -30,9 +30,9 @@
   <h1 class="">Settings</h1>
   <button
     on:click={() => setSelected("settings")}
-    class="nav settings h-full w-12 grid place-items-center invisible"
+    class="nav settings h-full w-12 grid place-items-center"
   >
-    <Settings class="h-12" />
+    <a href="/"><Map /></a>
   </button>
 </nav>
 

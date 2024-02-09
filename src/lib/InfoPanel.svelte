@@ -4,11 +4,10 @@
   import { clear } from "$lib/assets/icons.js";
   import params from "$lib/assets/params.json";
 
-  import { clickOutside } from "./utils.js";
-
   export let data;
   export let selected_variable_color;
   export let selected_variable_size;
+  console.log("sel color: ", selected_variable_size);
   export let currentSizeVal;
   export let currentColorVal;
 

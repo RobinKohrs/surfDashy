@@ -47,7 +47,7 @@
           _id={1}
           options={params.variables}
           legend={""}
-          userSelected={selectedSize}
+          bind:userSelected={selectedSize}
         />
       </div>
     </div>

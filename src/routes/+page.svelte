@@ -1,4 +1,5 @@
 <script>
+  import { setContext } from "svelte";
   import { selectedColorId, selectedSizeId } from "$lib/stores/stores.js";
   import LeafletMap from "$lib/LeafletMap.svelte";
   import { tweened } from "svelte/motion";
@@ -7,6 +8,8 @@
   import DatePicker from "$lib/DatePicker.svelte";
   import params from "$lib/assets/params.json";
   import InfoPanel from "$lib/InfoPanel.svelte";
+
+  setContext("secret", "super_secret");
 
   import {
     getScales,
@@ -48,11 +51,9 @@
 
   // get the data for that date and variable
   let selected_variable_color = undefined;
-  let selected_variable_size = "daily_mean_wave_height_max";
+  let selected_variable_size = undefined;
 
   // if the store changes
-  $: console.log("sel color in map: ", selected_variable_color);
-  $: console.log("color in store: ", $selectedColorId);
   $: if ($selectedColorId) {
     selected_variable_color = $selectedColorId;
   } else {
@@ -60,7 +61,10 @@
     selectedColorId.set(selected_variable_color);
   }
 
-  $: if (selected_variable_size) {
+  $: if ($selectedSizeId) {
+    selected_variable_size = $selectedSizeId;
+  } else {
+    selected_variable_size = "daily_mean_wave_height_max";
     selectedSizeId.set(selected_variable_size);
   }
 
@@ -121,21 +125,31 @@
   $: if (data_current) {
     // get the new scales
     scaleSize = getScales(data_current, selected_variable_size, [0, 400]);
-    scaleColor = getScales(
-      data_current,
-      selected_variable_color,
-      [
-        "#009392",
-        "#72aaa1",
-        "#b1c7b3",
-        "#f1eac8",
-        "#e5b9ad",
-        "#d98994",
-        "#d0587e",
-      ].reverse(),
-      "color",
-      [0, 4]
-    );
+
+    if (selected_variable_color === "daily_mean_swell_rating") {
+      scaleColor = getScales(
+        data_current,
+        selected_variable_color,
+        [
+          "#009392",
+          "#72aaa1",
+          "#b1c7b3",
+          "#f1eac8",
+          "#e5b9ad",
+          "#d98994",
+          "#d0587e",
+        ].reverse(),
+        "color",
+        [0, 4]
+      );
+    } else {
+      scaleColor = getScales(
+        data_current,
+        selected_variable_color,
+        ["white", "#bf7428"],
+        "color"
+      );
+    }
 
     // draw the data
     current_circle_marker_all = drawMap(

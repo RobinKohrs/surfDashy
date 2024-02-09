@@ -261,13 +261,20 @@ export function getScales(data_array, accessor, rng, scale = "size", dom) {
     dom = d3.extent(dd);
   }
   let sc;
+
   if (scale === "size") {
     sc = d3.scaleLinear().domain(dom).range(rng);
+    console.log("sc size: ", sc);
   } else {
-    sc = d3
-      .scaleSequential()
-      .domain(dom)
-      .interpolator(d3.interpolateRgbBasis(rng));
+    if (accessor === "daily_mean_swell_rating") {
+      sc = d3
+        .scaleSequential()
+        .domain(dom)
+        .interpolator(d3.interpolateRgbBasis(rng));
+    } else {
+      console.log("here scale");
+      sc = d3.scaleLinear().domain(dom).range(rng);
+    }
   }
   // let sc = d3.scalePow().exponent(2).domain(ext).range(rng);
   return sc;
