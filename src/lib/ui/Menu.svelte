@@ -9,7 +9,7 @@
       route: "statistics",
     },
     {
-      display: "Global settings",
+      display: "Global settings | Shortcuts",
       route: "settings",
     },
     {

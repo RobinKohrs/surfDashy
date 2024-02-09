@@ -6,7 +6,6 @@
   export let showHamburger;
   export let date_display = "";
   export let latest_time_display;
-  $: console.log("time: ", latest_time_display);
   let selectedOverlay = "none";
 
   function setSelected(clickedMode) {

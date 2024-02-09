@@ -1,7 +1,17 @@
 import { csv, json } from "d3-fetch";
-import { scaleLinear, scaleLog, scalePow } from "d3-scale";
+import { scaleLinear, scaleLog, scalePow, scaleSequential } from "d3-scale";
+import { interpolateRgbBasis } from "d3-interpolate";
 import { extent } from "d3-array";
-const d3 = { csv, json, scaleLinear, extent, scaleLog, scalePow };
+const d3 = {
+  csv,
+  json,
+  scaleLinear,
+  extent,
+  scaleLog,
+  scalePow,
+  scaleSequential,
+  interpolateRgbBasis,
+};
 
 export async function getInitialData() {
   let path_dates =
@@ -245,10 +255,20 @@ export async function fetchData(url) {
   };
 }
 
-export function getScales(data_array, accessor, rng) {
-  let dd = data_array.map((d) => +d[accessor]).filter((v) => !isNaN(v));
-  let ext = d3.extent(dd);
-  let sc = d3.scaleLinear().domain(ext).range(rng);
+export function getScales(data_array, accessor, rng, scale = "size", dom) {
+  if (!dom) {
+    let dd = data_array.map((d) => +d[accessor]).filter((v) => !isNaN(v));
+    dom = d3.extent(dd);
+  }
+  let sc;
+  if (scale === "size") {
+    sc = d3.scaleLinear().domain(dom).range(rng);
+  } else {
+    sc = d3
+      .scaleSequential()
+      .domain(dom)
+      .interpolator(d3.interpolateRgbBasis(rng));
+  }
   // let sc = d3.scalePow().exponent(2).domain(ext).range(rng);
   return sc;
 }

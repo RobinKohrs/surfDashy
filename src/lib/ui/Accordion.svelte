@@ -70,7 +70,7 @@
 
   /* Margins inside the container will throw animation height calculations off, better use paddings */
   :global(.accordion-content *) {
-    margin: 2rem;
+    /* margin: 2rem; */
     /* padding: 2rem; */
   }
 
@@ -87,7 +87,6 @@
     border-top: 2px solid #676767;
     border-bottom: 2px solid #676767;
     margin-bottom: -2px;
-    overflow: hidden;
   }
 
   :global(.accordion-trigger-input) {
@@ -141,7 +140,7 @@
   }
 
   :global(.accordion-content) {
-    padding: 16px;
-    background: #f8f8f8;
+    /* padding: 16px;
+    background: #f8f8f8; */
   }
 </style>

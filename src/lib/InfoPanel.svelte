@@ -50,13 +50,13 @@
       {size_val_name}
     </div>
     <div class="grid__item value size text-center">
-      {$currentSizeVal.toFixed(2)}&nbsp;{size_val_suffix}
+      {$currentSizeVal.toFixed(2)}&nbsp;{size_val_suffix || ""}
     </div>
     <div class="grid__item label color">
       {color_val_name}
     </div>
     <div class="grid__item value color text-center">
-      {$currentColorVal.toFixed(2)}&nbsp;{color_val_suffix}
+      {$currentColorVal.toFixed(2)}&nbsp;{color_val_suffix || ""}
     </div>
   </div>
 </div>

@@ -85,9 +85,8 @@
   }
 </script>
 
-<form
+<div
   class="search-container w-full h-full rounded-lg z-[3000]"
-  action="javascript:void(0);"
   use:clickOutside={() => (show_search = !show_search)}
 >
   <label
@@ -156,7 +155,7 @@
       {/each}
     </ul>
   {/if}
-</form>
+</div>
 
 <style>
   input {

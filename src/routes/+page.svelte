@@ -1,13 +1,11 @@
 <script>
-  import { onMount } from "svelte";
-
+  import { selectedColorId, selectedSizeId } from "$lib/stores/stores.js";
   import LeafletMap from "$lib/LeafletMap.svelte";
   import { tweened } from "svelte/motion";
   import { csv, json } from "d3-fetch";
   import Search from "$lib/Search.svelte";
   import DatePicker from "$lib/DatePicker.svelte";
   import params from "$lib/assets/params.json";
-  import MobileWarning from "$lib/Warning.svelte";
   import InfoPanel from "$lib/InfoPanel.svelte";
 
   import {
@@ -49,8 +47,23 @@
   }
 
   // get the data for that date and variable
-  let selected_variable_color = params.variables[0]["id"];
-  let selected_variable_size = params.variables[3]["id"];
+  let selected_variable_color = undefined;
+  let selected_variable_size = "daily_mean_wave_height_max";
+
+  // if the store changes
+  $: console.log("sel color in map: ", selected_variable_color);
+  $: console.log("color in store: ", $selectedColorId);
+  $: if ($selectedColorId) {
+    selected_variable_color = $selectedColorId;
+  } else {
+    selected_variable_color = "daily_mean_swell_rating";
+    selectedColorId.set(selected_variable_color);
+  }
+
+  $: if (selected_variable_size) {
+    selectedSizeId.set(selected_variable_size);
+  }
+
   let data_current;
   let selected_time;
   let selected_date_info;
@@ -108,10 +121,21 @@
   $: if (data_current) {
     // get the new scales
     scaleSize = getScales(data_current, selected_variable_size, [0, 400]);
-    scaleColor = getScales(data_current, selected_variable_color, [
-      "white",
-      "#b55836",
-    ]);
+    scaleColor = getScales(
+      data_current,
+      selected_variable_color,
+      [
+        "#009392",
+        "#72aaa1",
+        "#b1c7b3",
+        "#f1eac8",
+        "#e5b9ad",
+        "#d98994",
+        "#d0587e",
+      ].reverse(),
+      "color",
+      [0, 4]
+    );
 
     // draw the data
     current_circle_marker_all = drawMap(
