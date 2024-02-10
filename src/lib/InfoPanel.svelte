@@ -26,7 +26,7 @@
 </script>
 
 <div
-  class="spot-tooltip absolute bg-[rgba(255,255,255,.93)] w-[90%] max-w-[500px] px-4 py-2 rounded-t-lg text-xl buttom-0 left-1/2 z-[2000] -translate-x-1/2 -translate-y-[100%]"
+  class="spot-tooltip fixed bg-[rgba(255,255,255,.93)] w-full max-w-[500px] px-4 py-2 rounded-b-lg text-xl top-0 left-1/2 z-[2000] -translate-x-1/2"
 >
   <button
     class="absolute top-0 right-0 p-2 w-12 aspect-square"

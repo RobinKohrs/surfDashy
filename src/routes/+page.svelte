@@ -8,8 +8,7 @@
   import DatePicker from "$lib/DatePicker.svelte";
   import params from "$lib/assets/params.json";
   import InfoPanel from "$lib/InfoPanel.svelte";
-
-  setContext("secret", "super_secret");
+  import Legend from "$lib/ui/Legend.svelte";
 
   import {
     getScales,
@@ -298,6 +297,10 @@
       set_view={[-22.948787528229474, -43.239910128238364]}
     />
   {/if}
+
+  <div class="legend">
+    <Legend {scaleSize} {scaleColor} />
+  </div>
 
   {#if active_spot_data}
     <InfoPanel

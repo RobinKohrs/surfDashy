@@ -28,10 +28,7 @@
     <Hamburger width={"20px"} {ariaExpanded} />
   </button>
   <h1 class="">Settings</h1>
-  <button
-    on:click={() => setSelected("settings")}
-    class="nav settings h-full w-12 grid place-items-center"
-  >
+  <button class="nav settings h-full w-12 grid place-items-center">
     <a href="/"><Map /></a>
   </button>
 </nav>
@@ -56,7 +53,7 @@
   {/if}
 </div>
 
-<!-- use padding so not collaping margins -->
+<!-- use padding so no collaping margins -->
 <div class="container statistics pt-14 max-w-[1080px] mx-auto px-2 z-[0]">
   <slot />
 </div>

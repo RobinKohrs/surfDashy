@@ -19,7 +19,9 @@
   }
 
   let selectedSize, selectedColor;
+  // basemaps
 
+  // variables
   $: if (selectedSize) {
     selectedSizeId.set(selectedSize);
   }
@@ -37,6 +39,12 @@
   }
 </script>
 
+<section class="shortcuts">
+  <h2>Shortcuts</h2>
+</section>
+<section class="basemap">
+  <h2>Basemap</h2>
+</section>
 <section class="variable">
   <h2 class="">Select variables for map</h2>
   <div class="variables-container grid grid-rows-2 dt:grid-cols-2">
