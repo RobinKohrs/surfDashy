@@ -312,6 +312,8 @@
       {currentColorVal}
       {selected_variable_color}
       {selected_variable_size}
+      {scaleSize}
+      {scaleColor}
     />
   {/if}
 </div>

@@ -128,4 +128,8 @@
       opacity: 0;
     }
   }
+
+  :global(.leaflet-control-attribution) {
+    display: none;
+  }
 </style>
