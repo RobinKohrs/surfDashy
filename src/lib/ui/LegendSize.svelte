@@ -2,7 +2,7 @@
   export let position = "right";
   export let scaleSize;
 
-  let circles = [{ val: 0.5 }, { val: 6 }];
+  let circles = [{ val: 1 }, { val: 6 }];
 
   let circles_computed;
   let height;

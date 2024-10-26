@@ -1,12 +1,10 @@
 <script>
-  import { setContext } from "svelte";
   import { selectedColorId, selectedSizeId } from "$lib/stores/stores.js";
   import LeafletMap from "$lib/LeafletMap.svelte";
   import { tweened } from "svelte/motion";
   import { csv, json } from "d3-fetch";
   import Search from "$lib/Search.svelte";
   import DatePicker from "$lib/DatePicker.svelte";
-  import params from "$lib/assets/params.json";
   import InfoPanel from "$lib/InfoPanel.svelte";
   import Legend from "$lib/ui/Legend.svelte";
 
@@ -106,7 +104,7 @@
     active_spot_data = spot;
     active_spot_marker = marker;
     active_spot_id = spot._id;
-    marker.setStyle({ fillColor: "green" });
+    marker.setStyle({ weight: 2 });
     tweenVals();
   };
 
@@ -299,7 +297,7 @@
   {/if}
 
   <div class="legend">
-    <Legend {scaleSize} {scaleColor} />
+    <Legend {scaleSize} {scaleColor} {data_current} {selected_variable_color} />
   </div>
 
   {#if active_spot_data}

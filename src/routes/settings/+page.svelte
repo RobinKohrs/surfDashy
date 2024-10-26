@@ -1,7 +1,6 @@
 <script>
   import Radio from "$lib/ui/Radio.svelte";
   import params from "$lib/assets/params.json";
-  import { slide } from "svelte/transition";
   import { getInitialData } from "$lib/utils";
   import { selectedColorId, selectedSizeId } from "$lib/stores/stores.js";
 
@@ -18,17 +17,8 @@
     }, 1000);
   }
 
-  let selectedSize, selectedColor;
+  let selectedColor;
   // basemaps
-
-  // variables
-  $: if (selectedSize) {
-    selectedSizeId.set(selectedSize);
-  }
-
-  if ($selectedSizeId) {
-    selectedSize = $selectedSizeId;
-  }
 
   $: if (selectedColor) {
     selectedColorId.set(selectedColor);
@@ -41,29 +31,23 @@
 
 <section class="shortcuts">
   <h2>Shortcuts</h2>
+  <div class="text-sm text-center pb-2">(work only in the map-view)</div>
+  <ul class="list-disc list-inside">
+    <li class="shortcut">Ctrl + k = Search for spot</li>
+    <li class="shortcut">Ctrl + d = Pick a date</li>
+    <li class="shortcut">Ctrl + m = open the menu</li>
+  </ul>
 </section>
 <section class="basemap">
   <h2>Basemap</h2>
+  <Radio legend={""} options={[{ id: "bathy", display: "Bathymetry" }]} />
 </section>
 <section class="variable">
-  <h2 class="">Select variables for map</h2>
-  <div class="variables-container grid grid-rows-2 dt:grid-cols-2">
+  <h2 class="">Select variables for Colormapping</h2>
+  <div class="variables-container">
     <div class="size">
-      <h3>Size</h3>
-      <div class="size-selection">
-        <Radio
-          _id={1}
-          options={params.variables}
-          legend={""}
-          bind:userSelected={selectedSize}
-        />
-      </div>
-    </div>
-    <div class="size">
-      <h3>Color</h3>
       <div class="color-selection">
         <Radio
-          _id={2}
           options={params.variables}
           legend={""}
           bind:userSelected={selectedColor}

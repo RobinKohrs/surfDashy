@@ -1,3 +1,4 @@
+import { select } from "d3";
 import { csv } from "d3-fetch";
 const d3 = { csv };
 

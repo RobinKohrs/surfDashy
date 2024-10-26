@@ -4,6 +4,8 @@
   export let position = "bottom";
   export let scaleSize;
   export let scaleColor;
+  export let data_current;
+  export let selected_variable_color;
 
   function changePosition() {
     if (position === "right") {
@@ -31,13 +33,13 @@
     style={position === "right"
       ? "grid-template-columns: 1fr 1fr"
       : "grid-template-rows: 40px 40px"}
-    class="legend-container__inner p-2 absolute bg-[rgba(255,255,255,.7)] rounded-md grid gap-1
+    class="legend-container__inner p-2 absolute bg-[rgba(255,255,255,1)] rounded-t-md grid gap-1
     {position === 'right'
       ? '-translate-x-full h-full'
       : '-translate-y-full  w-full'}"
   >
     <LegendSize {scaleSize} />
-    <LegendColor {scaleColor} />
+    <LegendColor {scaleColor} {data_current} {selected_variable_color} />
   </div>
 </div>
 

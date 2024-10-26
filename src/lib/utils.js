@@ -64,6 +64,7 @@ export async function getDataForDay(map, selected_time) {
     url: "https://raw.githubusercontent.com/RobinKohrs/r-cadeasondas/main/data_preprocessed/daily_data_global/data/",
     date: selected_date,
   });
+  console.log("url: ", url);
 
   let data = await fetchData(url);
   return data;
@@ -76,7 +77,6 @@ export async function getDataForMonth(map, selected_time) {
     date: selected_date,
   });
 
-  console.log("url: ", url);
   let data = await fetchData(url);
   return data;
 }
@@ -139,6 +139,7 @@ export function resetStyle(marker, size, color) {
   marker.setStyle({
     fillColor: color,
     radius: size,
+    weight: 0.2,
   });
 }
 
@@ -264,7 +265,6 @@ export function getScales(data_array, accessor, rng, scale = "size", dom) {
 
   if (scale === "size") {
     sc = d3.scaleLinear().domain(dom).range(rng);
-    console.log("sc size: ", sc);
   } else {
     if (accessor === "daily_mean_swell_rating") {
       sc = d3

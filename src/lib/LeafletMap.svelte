@@ -13,6 +13,8 @@
   // map options
   export let set_view = [48.2183974, 16.3807465];
   export let zoom = 4;
+  let mapContainer;
+  let baseLayer;
 
   onMount(async () => {
     const leaflet = await import("leaflet");
@@ -26,30 +28,15 @@
       zoomControl: false,
     }).setView(set_view, zoom);
 
-    // L.tileLayer
-    //   .wms(
-    //     "https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv?version=1.3.0",
-    //     {
-    //       layers: "GEBCO_LATEST",
-    //       attribution: "GEBCO",
-    //     }
-    //   )
-    //   .addTo(map);
+    baseLayer = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      {
+        attribution:
+          "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+      }
+    );
 
-    // L.tileLayer
-    //   .wms(
-    //     "http://wmts.marine.copernicus.eu/teroWmts/?service=WMTS&version=1.0.0&request=GetTile",
-    //     {
-    //       layers: "GLOBAL_MULTIYEAR_WAV_001_032/cmems_mod_glo_wav_my_0.2_PT3H-i_202112/VHM0",
-    //     }
-    //   )
-    //   .addTo(map);
-
-    const mtLayer = new MaptilerLayer({
-      apiKey: "YED34JdAn8w32PnMgk9m",
-      style:
-        "https://api.maptiler.com/maps/1a3d1e7a-4f31-4675-bbd9-a88ede8789bf/style.json?key=YED34JdAn8w32PnMgk9m",
-    }).addTo(map);
+    baseLayer.addTo(map);
 
     dispatch("mapLoaded", { L, map });
   });

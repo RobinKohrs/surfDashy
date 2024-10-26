@@ -57,7 +57,6 @@
   </div>
   <div
     class="statistics__grid"
-    style:color={$currentColorVal > 2 ? "white" : "black"}
     style:background-color={scaleColor($currentColorVal)}
   >
     <div class="item-1 flex flex-col items-center">
